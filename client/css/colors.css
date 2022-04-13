@@ -1,0 +1,148 @@
+
+p,
+button {
+   color:  white;
+}
+
+.borders {
+   border: 3px double darkorange;
+   border-radius: 10px;
+}
+
+
+/* =================================================== */
+/* Game Section */
+/* =================================================== */
+.menu {
+   background: linear-gradient(to right, darkviolet, lightgray);
+}
+
+.create-game button,
+.games-header p,
+.chat-header p {
+   background: linear-gradient(to bottom right, lightblue, dodgerblue, darkviolet);
+}
+
+/* :Hover */
+.create-game button:hover {
+   background: linear-gradient(to bottom right, lightblue, rgb(0, 128, 255), darkviolet);
+   box-shadow: grey 5px 5px 5px;
+}
+
+/* :Active */
+.create-game button:active {
+   background: linear-gradient(to bottom right, lightblue, rgb(0, 81, 161), darkviolet);
+   box-shadow: rgb(75, 75, 75) 5px 5px 5px;
+}
+
+.games-container,
+.chat-container {
+   background-color: white;
+}
+
+.game {
+   background: linear-gradient(to right, dodgerblue, darkviolet);
+}
+
+.ended-bgd {
+   background: linear-gradient(to right, lightgray, dimgray);
+}
+
+
+/* ====== Scroll Bar ====== */
+/* Mozilla */
+.games-list {
+   scrollbar-color: darkviolet lightgray;
+}
+
+/* Chrome */
+::-webkit-scrollbar {
+   width: 8px;
+   background: lightgrey;
+}
+
+::-webkit-scrollbar-thumb {
+   background: darkviolet;
+}
+
+
+/* One Game */
+.game figure {
+   background-color: white;
+}
+
+.running-icon {
+   color: limegreen;
+}
+
+.ended-icon {
+   color: dimgray;
+}
+
+.delete-game-btn i {
+   color: red;
+}
+
+/* :Hover */
+.delete-game-btn:hover i {
+   color: red;
+   font-size: 410%;
+}
+
+/* :Active */
+.delete-game-btn:active i {
+   color: black;
+}
+
+
+
+/* =================================================== */
+/* Chat Section */
+/* =================================================== */
+.chat {
+   background: linear-gradient(to right, lightgray, dodgerblue);
+}
+
+.chat-container {
+   background: linear-gradient(to right, lawngreen, lightgrey);
+}
+
+.magnifier-btn {
+   background-color: dodgerblue;
+}
+
+.magnifier-btn i {
+   color: white;
+}
+
+/* :Hover */
+.magnifier-btn:hover {
+   background-color: skyblue;
+}
+
+/* :Active */
+.magnifier-btn:active {
+   background-color: royalblue;
+}
+
+.chat-list,
+.chat-container input {
+   background-color: white;
+}
+
+
+/* ====== Scroll Bar ====== */
+/* Mozilla */
+.games-list {
+   scrollbar-color: darkviolet lightgray;
+}
+
+/* Chrome */
+::-webkit-scrollbar {
+   width: 8px;
+   background: lightgrey;
+}
+
+::-webkit-scrollbar-thumb {
+   background: darkviolet;
+}

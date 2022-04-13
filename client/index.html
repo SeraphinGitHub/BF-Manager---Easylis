@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <!-- ==== Prevent Favicon Error ==== -->
+      <link rel="icon" href="data:;base64,=">
+      
+      <link rel="stylesheet" type="text/css" href="http://localhost:3000/client/css/all.min.css">
+      <link rel="stylesheet" type="text/css" href="http://localhost:3000/client/css/colors.css">
+      <link rel="stylesheet" type="text/css" href="http://localhost:3000/client/css/styles.css">
+      <link rel="stylesheet" type="text/css" href="http://localhost:3000/client/css/menu.css">
+      <link rel="stylesheet" type="text/css" href="http://localhost:3000/client/css/chat.css">
+
+      <title>BF Manager</title>
+   </head>
+
+   <body class="flexCenter">
+      
+      <!-- Game Section -->
+      <section class="flexCenter menu">
+
+         <!-- New Game Container -->
+         <form class="flexCenter create-game">
+            <input class="borders" type="text" placeholder="Nouvelle partie..." autofocus>
+
+            <button class="flexCenter borders">
+               <p>Ajouter</p>
+               <i class="fas fa-plus-circle"></i>
+            </button>
+         </form>
+
+         <!-- Current Games Container -->
+         <div class="flexCenter borders games-container">
+
+            <!-- Header -->
+            <div class="flexCenter games-header">
+               <p class="borders">Les parties</p>
+               <p class="borders games-count">??</p>
+            </div>
+
+            <!-- Games Lists -->
+            <ul class="flexCenter games-list">
+               <!-- <li></li> -->
+
+               <li class="flexCenter borders game">
+                  <figure class="flexCenter">
+                     <i class="running-icon visible fas fa-check-square"></i>
+                     <i class="ended-icon fas fa-times-square"></i>
+                  </figure>
+   
+                  <p class="flexCenter">Vincent vs Maxime</p>
+   
+                  <button class="delete-game-btn">
+                     <figure class="flexCenter">
+                        <i class="visible fas fa-times-circle"></i>
+                     </figure>
+                  </button>
+               </li>
+            </ul>
+         </div>
+
+      </section>
+      
+
+      <!-- Chat Section -->
+      <section class="flexCenter chat">
+         <div class="flexCenter borders chat-container">
+
+            <!-- Header -->
+            <div class="flexCenter chat-header">
+               <p class="borders">Chat</p>
+               
+               <figure class="flexCenter borders profile-photo">
+                  <img src="client/images/profile.jpg" alt="profile photo">
+               </figure>
+            </div>
+
+            <!-- Search Bar -->
+            <form class="flexCenter borders search-bar">
+               <input type="text" placeholder="Nickname...">
+
+               <button class="flexCenter magnifier-btn">
+                  <i class="fas fa-search"></i>
+               </button>
+            </form>
+
+            <!-- Messages List -->
+            <ul class="flexCenter borders chat-list">
+               <!-- <li></li> -->
+               <li class="flexCenter message"></li>
+            </ul>
+
+            <!-- InputField -->
+            <input class="flexCenter borders chat-input" type="text" placeholder="Écrivez quelque chose">
+         </div>
+      </section>
+
+   </body>
+
+   <script src="/socket.io/socket.io.js"></script>
+   <script src="http://localhost:3000/client/javascript/gameScreen.js"></script>
+</html>

@@ -1,0 +1,94 @@
+
+.chat {
+   height: 100%;
+   width: 40%;
+}
+
+.chat-container {
+   align-content: flex-start;
+   height: 825px;
+   width: 80%;
+}
+
+
+/* ====== Header ====== */
+.chat-header {
+   justify-content: space-between;
+   margin-top: -20px;
+   margin-right: -30px;
+}
+
+.chat-header p {
+   height: 30px;
+}
+
+.profile-photo {
+   overflow: hidden;
+   height: 100px;
+   width: 100px;
+}
+
+.profile-photo img {
+   object-fit: cover;
+   height: 100%;
+   width: 100%;
+}
+
+
+.chat-header,
+.search-bar,
+.chat-list,
+.chat-container input {
+   margin-bottom: 17px;
+}
+
+.search-bar,
+.chat-list {
+   width: 90%;
+}
+
+/* ====== Search Bar ====== */
+.search-bar {
+   justify-content: space-between;
+}
+
+.search-bar input {
+   border: none;
+   border-radius: 8px 0px 0px 8px;
+   width: 80.5%;
+   text-align: left;
+   margin-bottom: 0;
+}
+
+.magnifier-btn {
+   border: none;
+   width: 14%;
+   border-radius: 0px 8px 8px 0px;
+}
+
+.magnifier-btn i {
+   font-size: 200%;
+}
+
+
+/* ====== Messages List ====== */
+.chat-list {
+   align-content: flex-start;
+   overflow-y: scroll;
+   scrollbar-width: thin;
+   height: 550px;
+}
+
+.message {
+   justify-content: flex-start;
+   padding-left: 15px;
+   margin-top: 5px;
+   font-size: 110%;
+   font-family: Verdana;
+}
+
+
+/* ====== Chat InputField ====== */
+.chat-input {
+   width: 85%;
+}

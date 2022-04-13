@@ -1,0 +1,103 @@
+
+.menu {
+   align-content: flex-start;
+   height: 100%;
+   width: 60%;
+}
+
+
+/* ============================================ */
+/* Create New Game */
+/* ============================================ */
+.create-game {
+   justify-content: space-around;
+   padding: 30px;
+}
+
+/* ====== InputField ====== */
+.create-game input {
+   width: 50%;
+}
+
+/* ====== Button ====== */
+.create-game button {
+   width: 20%;
+}
+
+.create-game button p {
+   font-size: 22px;
+   padding-right: 20px;
+   padding-top: 4px;
+}
+
+.create-game button i {
+   font-size: 250%;
+}
+
+
+/* ============================================ */
+/* Games Container */
+/* ============================================ */
+.games-container {
+   align-content: flex-start;
+   height: 740px;
+   width: 95%;
+   margin-top: 20px;
+}
+
+/* ====== Header ====== */
+.games-header {
+   justify-content: space-between;
+   margin-top: -20px;
+   margin-right: -30px;
+}
+
+
+/* ====== Games List ====== */
+.games-list {
+   overflow-y: scroll;
+   align-content: flex-start;
+   justify-content: flex-start;
+   scrollbar-width: thin;
+   height: 620px;
+   margin: 40px;
+}
+
+
+/* ============================================ */
+/* One Game */
+/* ============================================ */
+.game {
+   justify-content: flex-start;
+   height: 60px;
+   width: 90%;
+   margin-top: 15px;
+   padding-left: 50px;
+}
+
+.game p {
+   justify-content: flex-start;
+   width: 82%;
+   padding-left: 50px;
+   font-size: 135%;
+}
+
+.game figure {
+   background-color: white;
+   border-radius: 50%;
+   height: 25px;
+   width: 25px;
+}
+
+.game i {
+   font-size: 220%;
+}
+
+.delete-game-btn i {
+   font-size: 340%;
+}
+
+.delete-game-btn {
+   border: none;
+   background: none;
+}

@@ -39,6 +39,7 @@
 /* Games Container */
 /* ============================================ */
 .games-container {
+   position: relative;
    align-content: flex-start;
    height: 740px;
    width: 95%;
@@ -55,6 +56,7 @@
 
 /* ====== Games List ====== */
 .games-list {
+   visibility: hidden;
    overflow-y: scroll;
    align-content: flex-start;
    justify-content: flex-start;
@@ -65,39 +67,75 @@
 
 
 /* ============================================ */
-/* One Game */
+/* Game Name */
 /* ============================================ */
-.game {
+.games-list li {
+   position: relative;
    justify-content: flex-start;
+   overflow: hidden;
    height: 60px;
-   width: 90%;
    margin-top: 15px;
+}
+
+.game-name {
+   height: 90%;
+   width: 90%;
    padding-left: 50px;
 }
 
-.game p {
+.game-name p {
    justify-content: flex-start;
    width: 82%;
    padding-left: 50px;
    font-size: 135%;
 }
 
-.game figure {
+.game-name figure {
    background-color: white;
    border-radius: 50%;
    height: 25px;
    width: 25px;
 }
 
-.game i {
+.game-name i {
    font-size: 220%;
 }
 
 .delete-game-btn i {
-   font-size: 340%;
+   font-size: 300%;
 }
 
 .delete-game-btn {
    border: none;
    background: none;
+}
+
+
+/* ============================================ */
+/* Game */
+/* ============================================ */
+.game {
+   visibility: hidden;
+   overflow: hidden;
+   position: absolute;
+   align-content: flex-start;
+   top: 45px;
+   left: 50%;
+   transform: translate(-50%);
+}
+
+.game figure {
+   box-shadow: black 0px 0px 10px;
+}
+
+.game figure img {
+   height: 100%;
+   width: 100%;
+}
+
+.quit-game {
+   height: 50px;
+   width: 25%;
+   font-size: 20px;
+   margin-bottom: 25px;
 }

@@ -3,8 +3,8 @@
 
 require("dotenv").config();
 const express = require("express");
-const app = express();
 const http = require("http");
+const app = express();
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
@@ -25,17 +25,25 @@ server.listen(process.env.PORT || 3000, () => {
 
 
 // =====================================================================
+// Import Files
+// =====================================================================
+const Player = require("./server/classes/Player.js"); 
+
+
+// =====================================================================
 // Init Client
 // =====================================================================
 let socketList = {};
-let clientList = {};
-let clientID = 0;
+let playerList = {};
+let playerID = 0;
 
+
+// Server Connection
 io.on("connection", (socket) => {
    // console.log("User connected !");
 
    // ==========  Generate ID  ==========
-   socket.id = clientID++;
+   socket.id = playerID++;
    socketList[socket.id] = socket;
    onConnect(socket);
 
@@ -57,15 +65,13 @@ const onConnect = (socket) => {
    // ================================
    // Init Player
    // ================================
-   // socket.on("send_initClient", (data) =>  {
-   //    socket.emit("received_initClient", player.id);
+   socket.emit("initClient", player.id);
 
-   //    for(let i in playerList) {
-   //       let player = playerList[i];
-   //       let socket = socketList[player.id];
-   //       socket.emit("initPlayerPack", initPack_PlayerList);
-   //    }
-   // });
+   // for(let i in playerList) {
+   //    let player = playerList[i];
+   //    let socket = socketList[player.id];
+   //    socket.emit("initAllPlayers", player.id);
+   // }
    
 
    // ================================
@@ -76,15 +82,15 @@ const onConnect = (socket) => {
    // });
 }
 
-// Client disconnection
+
+// Player disconnection
 const onDisconnect = (socket) => {
 
-   // let client = clientList[socket.id];
+   for(let i in playerList) {
+      let player = playerList[i];
+      let socket = socketList[player.id];
+      socket.emit("removePlayer", player);
+   };
    
-   // for(let i in clientList) {
-   //    let socket = socketList[client.id];
-   //    socket.emit("removeClient", data);
-   // };
-   
-   // delete clientList[socket.id];
+   delete playerList[socket.id];
 }

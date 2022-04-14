@@ -9,49 +9,50 @@ button {
    border-radius: 10px;
 }
 
-
-/* =================================================== */
-/* Game Section */
-/* =================================================== */
-.menu {
-   background: linear-gradient(to right, darkviolet, lightgray);
-}
-
-.create-game button,
-.games-header p,
-.chat-header p {
+.blue-bgd {
    background: linear-gradient(to bottom right, lightblue, dodgerblue, darkviolet);
 }
 
-/* :Hover */
-.create-game button:hover {
-   background: linear-gradient(to bottom right, lightblue, rgb(0, 128, 255), darkviolet);
+.red-bgd {
+   background: linear-gradient(to bottom right, pink, red);
+}
+
+.violet-bgd {
+   background: linear-gradient(to bottom right, violet, darkviolet);
+}
+
+.green-bgd {
+   background: linear-gradient(to bottom right, greenyellow, rgb(0, 170, 0));
+}
+
+
+/* =================================================== */
+/* :Hover - General */
+/* =================================================== */
+.create-game button:hover,
+.player-name button:hover,
+.quit-game:hover {
    box-shadow: grey 5px 5px 5px;
 }
 
-/* :Active */
-.create-game button:active {
-   background: linear-gradient(to bottom right, lightblue, rgb(0, 81, 161), darkviolet);
+
+/* =================================================== */
+/* :Active - General */
+/* =================================================== */
+.create-game button:active,
+.player-name button:active,
+.quit-game:active {
    box-shadow: rgb(75, 75, 75) 5px 5px 5px;
 }
 
-.games-container,
-.chat-container {
-   background-color: white;
-}
 
-.game {
-   background: linear-gradient(to right, dodgerblue, darkviolet);
-}
+/* =================================================== */
+/* Scroll Bars */
+/* =================================================== */
 
-.ended-bgd {
-   background: linear-gradient(to right, lightgray, dimgray);
-}
-
-
-/* ====== Scroll Bar ====== */
 /* Mozilla */
-.games-list {
+.games-list,
+.chat-list {
    scrollbar-color: darkviolet lightgray;
 }
 
@@ -66,7 +67,39 @@ button {
 }
 
 
-/* One Game */
+
+/* =================================================== */
+/* Game Section */
+/* =================================================== */
+.menu {
+   background: linear-gradient(to right, darkviolet, lightgray);
+}
+
+/* :Hover */
+.create-game button:hover {
+   background: linear-gradient(to bottom right, lightblue, rgb(0, 128, 255), darkviolet);
+}
+
+/* :Active */
+.create-game button:active {
+   background: linear-gradient(to bottom right, lightblue, rgb(0, 81, 161), darkviolet);
+}
+
+.games-container,
+.chat-container {
+   background-color: white;
+}
+
+.game-name {
+   background: linear-gradient(to right, dodgerblue, darkviolet);
+}
+
+.ended-bgd {
+   background: linear-gradient(to right, lightgray, dimgray);
+}
+
+
+/* ====== Game Name ====== */
 .game figure {
    background-color: white;
 }
@@ -95,6 +128,17 @@ button {
 }
 
 
+/* ====== Game ====== */
+.quit-game {
+   color: black;
+}
+
+/* :Active */
+.quit-game:active {
+   background: linear-gradient(to bottom right, rgb(255, 104, 129), rgb(190, 0, 0));
+}
+
+
 
 /* =================================================== */
 /* Chat Section */
@@ -104,7 +148,7 @@ button {
 }
 
 .chat-container {
-   background: linear-gradient(to right, lawngreen, lightgrey);
+   background: linear-gradient(to right, orange, lightgrey);
 }
 
 .magnifier-btn {
@@ -125,24 +169,18 @@ button {
    background-color: royalblue;
 }
 
+.player-name p,
+.player-name button,
 .chat-list,
 .chat-container input {
    background-color: white;
 }
 
-
-/* ====== Scroll Bar ====== */
-/* Mozilla */
-.games-list {
-   scrollbar-color: darkviolet lightgray;
+.player-name p {
+   color: black;
 }
 
-/* Chrome */
-::-webkit-scrollbar {
-   width: 8px;
-   background: lightgrey;
-}
-
-::-webkit-scrollbar-thumb {
-   background: darkviolet;
+/* :Active */
+.player-name button:active {
+   background: linear-gradient(to bottom right, pink, red);
 }

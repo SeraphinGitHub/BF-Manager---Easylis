@@ -10,6 +10,7 @@
 /* Create New Game */
 /* ============================================ */
 .create-game {
+   position: relative;
    justify-content: space-around;
    padding: 30px;
 }
@@ -32,6 +33,11 @@
 
 .create-game button i {
    font-size: 250%;
+}
+
+/* ====== Alert ====== */
+.create-game .alert-message {
+   left: 34%;
 }
 
 

@@ -39,8 +39,7 @@
 }
 
 .player-name p {
-   padding-bottom: 10px;
-   padding-top: 10px;
+   padding: 10px;
    font-size: 24px;
    font-weight: 600;
    text-shadow: none;
@@ -69,8 +68,7 @@
 
 .chat-header,
 .search-bar,
-.chat-list,
-.chat-container input {
+.chat-list {
    margin-bottom: 17px;
 }
 
@@ -121,6 +119,7 @@
 
 
 /* ====== Chat InputField ====== */
-.chat-input {
-   width: 85%;
+.chat-form {
+   position: relative;
+   width: 91%;
 }

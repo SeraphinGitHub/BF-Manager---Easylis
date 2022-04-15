@@ -9,6 +9,12 @@ button {
    border-radius: 10px;
 }
 
+.alert-message {
+   color: black;
+   background-color: pink;
+   border: 2px solid red;
+}
+
 .blue-bgd {
    background: linear-gradient(to bottom right, lightblue, dodgerblue, darkviolet);
 }
@@ -90,7 +96,7 @@ button {
    background-color: white;
 }
 
-.game-name {
+.running-bgd {
    background: linear-gradient(to right, dodgerblue, darkviolet);
 }
 

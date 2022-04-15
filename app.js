@@ -28,6 +28,8 @@ server.listen(process.env.PORT || 3000, () => {
 // Import Files
 // =====================================================================
 const Player = require("./server/classes/Player.js"); 
+const OneGame = require("./server/classes/OneGame.js"); 
+const GameSystem = require("./server/classes/GameSystem.js"); 
 
 
 // =====================================================================
@@ -36,6 +38,8 @@ const Player = require("./server/classes/Player.js");
 let socketList = {};
 let playerList = {};
 let playerID = 0;
+
+const gameSystem = new GameSystem();
 
 
 // Server Connection
@@ -61,22 +65,24 @@ const onConnect = (socket) => {
 
    const player = new Player(socket.id);
    playerList[socket.id] = player;
+   player.name = `Joueur ${player.id}`;
 
-   // ================================
-   // Init Player
-   // ================================
-   socket.emit("initClient", player.id);
+   
+   // ========== Init Player ==========
+   socket.emit("initClient", player.name);
+   
+   socket.on("addNewGame", (gameName) => {
 
-   // for(let i in playerList) {
-   //    let player = playerList[i];
-   //    let socket = socketList[player.id];
-   //    socket.emit("initAllPlayers", player.id);
-   // }
+      const oneGame = new OneGame(gameName);
+      gameSystem.gamesList[player.id] = oneGame;
+      gameSystem.gamesCount++;
+
+      serverSync();
+   });
    
 
-   // ================================
-   // Chat
-   // ================================
+
+   // ========== Chat ==========
    // socket.on("generalMessage", (textMessage) => {
    //    for(let i in socketList) socketList[i].emit("addMessage_General", `${player.name}: ${textMessage}`);
    // });
@@ -85,12 +91,20 @@ const onConnect = (socket) => {
 
 // Player disconnection
 const onDisconnect = (socket) => {
-
-   for(let i in playerList) {
-      let player = playerList[i];
-      let socket = socketList[player.id];
-      socket.emit("removePlayer", player);
-   };
    
    delete playerList[socket.id];
+}
+
+
+// =====================================================================
+// Server Sync
+// =====================================================================
+const serverSync = () => {
+
+   for(let i in playerList) {
+
+      let player = playerList[i];
+      let socket = socketList[player.id];
+      socket.emit("gamesList", gameSystem.syncPack());
+   }
 }

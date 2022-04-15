@@ -1,19 +1,12 @@
 
 "use strict"
 
-const chatDOM = {
-   playerName: document.querySelector(".player-name p"),
-   editNameBtn: document.querySelector(".player-name button"),
-   editNameInput: document.querySelector(".player-name input"),
-   searchBar: document.querySelector(".search-bar"),
-   searchBarInput: document.querySelector(".search-bar input"),
-}
-
-
-const initPlayerName = (playerID) => {
+const initPlayerName = (socket) => {
+   socket.on("initClient", (servPlayerName) => {
    
-   const playerName = chatDOM.playerName;
-   playerName.textContent = `Joueur ${playerID}`
+      const playerName = chatDOM.playerName;
+      playerName.textContent = servPlayerName;
+   });
 }
 
 const editPlayerName = () => {
@@ -64,13 +57,27 @@ const initSearchBar = () => {
    });
 }
 
+const initChatBar = (socket) => {
+
+   const chatForm = chatDOM.createGameForm;
+   const chatInput = chatDOM.createGameInput;
+
+   chatForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      
+      socket.emit("addNewGame", chatInput.value);
+      chatInput.value = "";
+   });
+}
+
 
 // =====================================================================
 // Init Chat Handler
 // =====================================================================
 const initChat = (socket) => {
    
-   socket.on("initClient", (playerID) => initPlayerName(playerID));
+   initPlayerName(socket);
    editPlayerName();
    initSearchBar();
+   initChatBar(socket);
 }

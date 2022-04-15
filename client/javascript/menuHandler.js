@@ -1,44 +1,57 @@
 
 "use strict"
 
-const menuDOM = {
-   createGameForm: document.querySelector(".create-game"),
-   createGameInput: document.querySelector(".create-game input"),
-   gamesCount: document.querySelector(".games-count"),
-   gamesList: document.querySelector(".games-list"),
-}
-
-
-const initCreateGame = () => {
+const initCreateGame = (socket) => {
 
    const createGameForm = menuDOM.createGameForm;
    const createGameInput = menuDOM.createGameInput;
+   const createGameAlert = menuDOM.createGameAlert;
 
    createGameForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      createGameInput.value = "";
+
+      if(formValidation(createGameInput, createGameAlert)) {
+         socket.emit("addNewGame", createGameInput.value);
+         createGameInput.value = "";
+      }      
    });
 }
 
-const initGameCount = (count) => {
-   
+const initGameCount = (count) => {  
+
    const gamesCount = menuDOM.gamesCount;
-   gamesCount.textContent = `Parties en cour: ${18}`
+   gamesCount.textContent = `Parties en cour: ${count}`
 }
 
-const gameListTemplate = () => {
+const gameListTemplate = (game) => {
 
-   const gameName = `
-      <li class="flexCenter" id="${"playerID"}">
+   let runningStatus;
+   let endedStatus;
+   let bgdColor;
+
+   if(game.status) {
+      runningStatus = "display";
+      endedStatus = "";
+      bgdColor = "running-bgd";
+   }
+
+   else {
+      runningStatus = "";
+      endedStatus = "display";
+      bgdColor = "ended-bgd";
+   }
+
+   const gameTemplate = `
+      <li class="flexCenter" id="${game.playerID}">
          <div class="back-cover slide"></div>
          
-         <div class="flexCenter borders game-name">
+         <div class="flexCenter borders game-name ${bgdColor}">
             <figure class="flexCenter">
-               <i class="running-icon display fas fa-check-square"></i>
-               <i class="ended-icon fas fa-times-square"></i>
+               <i class="running-icon ${runningStatus} fas fa-check-square"></i>
+               <i class="ended-icon ${endedStatus} fas fa-times-square"></i>
             </figure>
 
-            <p class="flexCenter">${"Something"}</p>
+            <p class="flexCenter">${game.name}</p>
 
             <button class="delete-game-btn">
                <figure class="flexCenter">
@@ -50,23 +63,34 @@ const gameListTemplate = () => {
    `;
 
    const gamesList = menuDOM.gamesList;
-   gamesList.insertAdjacentHTML("beforeend", gameName);
+   gamesList.insertAdjacentHTML("beforeend", gameTemplate);
+   renderedGamesArray.push(game);
 }
 
-const runningGames = 2;
+const generateGameList = (socket) => {
+   socket.on("gamesList", (syncPack) => {
+      
+      let gamesList = syncPack.gamesList;
+      let gamesCount = syncPack.gamesCount;
+      
+      for(let i in gamesList) {
+         let game = gamesList[i];
+         if(!renderedGamesArray.includes(game)) gameListTemplate(game);
+      }
 
-const generateGameList = () => {
-
-   for(let i = 0; i < runningGames; i++) gameListTemplate();
+      initGameCount(gamesCount);
+   });
 }
 
 
 // =====================================================================
 // Init Menu Handler
 // =====================================================================
+const renderedGamesArray = [];
+
 const initMenu = (socket) => {
-   
-   initCreateGame();
-   initGameCount();
-   generateGameList();
+
+   initCreateGame(socket);
+   initGameCount(0);
+   generateGameList(socket);
 }

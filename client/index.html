@@ -25,7 +25,8 @@
          <!-- New Game Container -->
          <form class="flexCenter create-game">
             <input class="borders" type="text" placeholder="Nouvelle partie..." autofocus>
-
+            <p class="flexCenter alert-message"></p>
+            
             <button class="flexCenter blue-bgd borders">
                <p>Ajouter</p>
                <i class="fas fa-plus-circle"></i>
@@ -44,45 +45,6 @@
             <!-- Games Lists -->
             <ul class="flexCenter visible games-list">
                <!-- <li></li> -->
-
-               <li class="flexCenter">
-                  <div class="back-cover slide"></div>
-                  
-                  <div class="flexCenter borders game-name">
-                     <figure class="flexCenter">
-                        <i class="running-icon display fas fa-check-square"></i>
-                        <i class="ended-icon fas fa-times-square"></i>
-                     </figure>
-      
-                     <p class="flexCenter">Vincent vs Maxime</p>
-      
-                     <button class="delete-game-btn">
-                        <figure class="flexCenter">
-                           <i class="display fas fa-times-circle"></i>
-                        </figure>
-                     </button>
-                  </div>
-               </li>
-
-               <li class="flexCenter">
-                  <div class="back-cover slide"></div>
-                  
-                  <div class="flexCenter borders game-name ended-bgd">
-                     <figure class="flexCenter">
-                        <i class="running-icon fas fa-check-square"></i>
-                        <i class="ended-icon display fas fa-times-square"></i>
-                     </figure>
-      
-                     <p class="flexCenter">Jean vs Pierre</p>
-      
-                     <button class="delete-game-btn">
-                        <figure class="flexCenter">
-                           <i class="display fas fa-times-circle"></i>
-                        </figure>
-                     </button>
-                  </div>
-               </li>
-
             </ul>
 
             <!-- Game -->
@@ -110,6 +72,7 @@
                <div class="flexCenter player-name">
                   <input class="flexCenter borders" type="text">
                   <p class="flexCenter borders display"></p>
+                  <p class="flexCenter alert-message"></p>
                   <button class="flexCenter violet-bgd borders">Modifier votre Nom</button>
                </div>
 
@@ -133,15 +96,18 @@
                <li class="flexCenter message">Joueur 48: Ceci est un message !</li>
             </ul>
 
-            <!-- InputField -->
-            <input class="flexCenter borders chat-input" type="text" placeholder="Écrivez quelque chose">
+            <!-- Chat InputField -->
+            <form class="flexCenter chat-form">
+               <input class="flexCenter borders chat-input" type="text" placeholder="Écrivez quelque chose">
+               <p class="flexCenter alert-message"></p>
+            </form>
          </div>
       </section>
 
    </body>
 
    <script src="/socket.io/socket.io.js"></script>
-   <script src="http://localhost:3000/client/javascript/gameHandler.js"></script>
+   <script src="http://localhost:3000/client/javascript/_GeneralHandler.js"></script>
    <script src="http://localhost:3000/client/javascript/menuHandler.js"></script>
    <script src="http://localhost:3000/client/javascript/chatHandler.js"></script>
 </html>

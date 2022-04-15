@@ -1,6 +1,8 @@
 
 "use strict"
 
+const clientPlayer = new ClientPlayer();
+
 const menuDOM = {
    createGameForm: document.querySelector(".create-game"),
    createGameInput: document.querySelector(".create-game input"),
@@ -10,12 +12,13 @@ const menuDOM = {
 }
 
 const chatDOM = {
-   playerName: document.querySelector(".player-name p"),
-   playerNameAlert: document.querySelector(".player-name .alert-message"),
+   nameField: document.querySelector(".name-field"),
    editNameBtn: document.querySelector(".player-name button"),
    editNameInput: document.querySelector(".player-name input"),
+   editNameAlert: document.querySelector(".player-name .alert-message"),
    searchBar: document.querySelector(".search-bar"),
    searchBarInput: document.querySelector(".search-bar input"),
+   chatList: document.querySelector(".chat-list"),
    chatForm: document.querySelector(".chat-form"),
    chatInput: document.querySelector(".chat-input"),
 }
@@ -29,8 +32,8 @@ const alertMessage = {
 
 const formValidation = (fieldClass, alertClass) => {
    
-   // if include: LETTER || letter || accent letters || White Space
-   const textRegEx = new RegExp(/^[A-Za-zÜ-ü ]+$/);
+   // if include: LETTER || letter || accent letters || number || White Space
+   const textRegEx = new RegExp(/^[A-Za-zÜ-ü0-9 ]+$/);
    
 
    // if Empty Field
@@ -42,7 +45,7 @@ const formValidation = (fieldClass, alertClass) => {
    // if text is more than 20 characters
    else if(fieldClass.value.length > 20) popUpAlert(alertClass, alertMessage.maxCharsAlert);
 
-   // if include any special characters or number
+   // if include any special characters
    else if(!textRegEx.test(fieldClass.value)) popUpAlert(alertClass, alertMessage.invalidAlert);
 
    // if everything's fine
@@ -60,6 +63,18 @@ const popUpAlert = (alertClass, message) => {
    }, duration);
 }
 
+const initPlayer = (socket) => {
+   socket.on("initClient", (initPack) => {
+   
+      clientPlayer.id = initPack.id;
+      clientPlayer.name = initPack.name;
+      
+      const nameField = chatDOM.nameField;
+      nameField.textContent = clientPlayer.name;
+   });
+}
+
+
 // =====================================================================
 // Init Game Handler
 // =====================================================================
@@ -67,6 +82,7 @@ window.addEventListener("load", () => {
 
    const socket = io();
 
+   initPlayer(socket);
    initMenu(socket);
    initChat(socket);
 });

@@ -71,7 +71,7 @@
                
                <div class="flexCenter player-name">
                   <input class="flexCenter borders" type="text">
-                  <p class="flexCenter borders display"></p>
+                  <p class="flexCenter borders name-field display"></p>
                   <p class="flexCenter alert-message"></p>
                   <button class="flexCenter violet-bgd borders">Modifier votre Nom</button>
                </div>
@@ -93,13 +93,11 @@
             <!-- Messages List -->
             <ul class="flexCenter borders chat-list">
                <!-- <li></li> -->
-               <li class="flexCenter message">Joueur 48: Ceci est un message !</li>
             </ul>
 
             <!-- Chat InputField -->
             <form class="flexCenter chat-form">
                <input class="flexCenter borders chat-input" type="text" placeholder="Écrivez quelque chose">
-               <p class="flexCenter alert-message"></p>
             </form>
          </div>
       </section>
@@ -107,6 +105,7 @@
    </body>
 
    <script src="/socket.io/socket.io.js"></script>
+   <script src="http://localhost:3000/client/javascript/classes/ClientPlayer.js"></script>
    <script src="http://localhost:3000/client/javascript/_GeneralHandler.js"></script>
    <script src="http://localhost:3000/client/javascript/menuHandler.js"></script>
    <script src="http://localhost:3000/client/javascript/chatHandler.js"></script>

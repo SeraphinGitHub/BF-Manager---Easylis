@@ -69,6 +69,8 @@
    scrollbar-width: thin;
    height: 620px;
    margin: 40px;
+   margin-left: 0;
+   padding-left: 40px;
 }
 
 
@@ -76,16 +78,29 @@
 /* Game Name */
 /* ============================================ */
 .games-list li {
+   cursor: pointer;
    position: relative;
    justify-content: flex-start;
    overflow: hidden;
    height: 60px;
+   width: 95%;
    margin-top: 15px;
+   border-radius: 8px;
+}
+
+/* ====== :Hover ====== */
+.games-list li:hover {
+   transform: scale(102%);
+}
+
+/* ====== :Active ====== */
+.games-list li:active {
+   transform: scale(98%);
+   transition-duration: 0s;
 }
 
 .game-name {
    height: 90%;
-   width: 90%;
    padding-left: 50px;
 }
 
@@ -112,6 +127,7 @@
 }
 
 .delete-game-btn {
+   visibility: hidden;
    border: none;
    background: none;
 }

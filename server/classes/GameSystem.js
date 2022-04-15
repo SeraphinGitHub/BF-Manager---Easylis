@@ -3,14 +3,14 @@
 
 class GameSystem {
    constructor() {
-
-      this.gamesList = {};
+      
+      this.gamesArray = [];
       this.gamesCount = 0;
    }
 
-   syncPack() {
+   initPack() {
       return {
-         gamesList: this.gamesList,
+         gamesArray: this.gamesArray,
          gamesCount: this.gamesCount,
       }
    }

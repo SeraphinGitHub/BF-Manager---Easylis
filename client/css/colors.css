@@ -36,6 +36,7 @@ button {
 /* :Hover - General */
 /* =================================================== */
 .create-game button:hover,
+.games-list li:hover,
 .player-name button:hover,
 .quit-game:hover {
    box-shadow: grey 5px 5px 5px;
@@ -46,6 +47,7 @@ button {
 /* :Active - General */
 /* =================================================== */
 .create-game button:active,
+.games-list li:active,
 .player-name button:active,
 .quit-game:active {
    box-shadow: rgb(75, 75, 75) 5px 5px 5px;
@@ -175,14 +177,14 @@ button {
    background-color: royalblue;
 }
 
-.player-name p,
+.name-field,
 .player-name button,
 .chat-list,
 .chat-container input {
    background-color: white;
 }
 
-.player-name p {
+.name-field {
    color: black;
 }
 

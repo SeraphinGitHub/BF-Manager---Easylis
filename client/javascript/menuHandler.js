@@ -13,7 +13,7 @@ const initCreateGame = (socket) => {
       if(formValidation(createGameInput, createGameAlert)) {
          socket.emit("addNewGame", createGameInput.value);
          createGameInput.value = "";
-      }      
+      }
    });
 }
 
@@ -27,19 +27,35 @@ const gameListTemplate = (game) => {
 
    let runningStatus;
    let endedStatus;
+   let deleteStatus;
    let bgdColor;
 
+   
+   // Toggle game status
    if(game.status) {
       runningStatus = "display";
       endedStatus = "";
+      deleteStatus = "display";
       bgdColor = "running-bgd";
    }
 
    else {
       runningStatus = "";
       endedStatus = "display";
+      deleteStatus = "";
       bgdColor = "ended-bgd";
    }
+
+   
+   // Toggle delete button
+   if(game.playerID === clientPlayer.id) {
+      deleteStatus = "visible";
+   }
+
+   else {
+      deleteStatus = "";
+   }
+
 
    const gameTemplate = `
       <li class="flexCenter" id="${game.playerID}">
@@ -53,7 +69,7 @@ const gameListTemplate = (game) => {
 
             <p class="flexCenter">${game.name}</p>
 
-            <button class="delete-game-btn">
+            <button class="delete-game-btn ${deleteStatus}">
                <figure class="flexCenter">
                   <i class="display fas fa-times-circle"></i>
                </figure>
@@ -64,21 +80,13 @@ const gameListTemplate = (game) => {
 
    const gamesList = menuDOM.gamesList;
    gamesList.insertAdjacentHTML("beforeend", gameTemplate);
-   renderedGamesArray.push(game);
 }
 
 const generateGameList = (socket) => {
    socket.on("gamesList", (syncPack) => {
       
-      let gamesList = syncPack.gamesList;
-      let gamesCount = syncPack.gamesCount;
-      
-      for(let i in gamesList) {
-         let game = gamesList[i];
-         if(!renderedGamesArray.includes(game)) gameListTemplate(game);
-      }
-
-      initGameCount(gamesCount);
+      syncPack.gamesArray.forEach(game => gameListTemplate(game));
+      initGameCount(syncPack.gamesCount);
    });
 }
 
@@ -86,8 +94,6 @@ const generateGameList = (socket) => {
 // =====================================================================
 // Init Menu Handler
 // =====================================================================
-const renderedGamesArray = [];
-
 const initMenu = (socket) => {
 
    initCreateGame(socket);

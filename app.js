@@ -27,9 +27,10 @@ server.listen(process.env.PORT || 3000, () => {
 // =====================================================================
 // Import Files
 // =====================================================================
-const Player = require("./server/classes/Player.js"); 
-const OneGame = require("./server/classes/OneGame.js"); 
 const GameSystem = require("./server/classes/GameSystem.js"); 
+const Player = require("./server/classes/Player.js"); 
+const NewGame = require("./server/classes/NewGame.js"); 
+const RegEx = require("./server/classes/RegEx.js"); 
 
 
 // =====================================================================
@@ -37,9 +38,10 @@ const GameSystem = require("./server/classes/GameSystem.js");
 // =====================================================================
 let socketList = {};
 let playerList = {};
-let playerID = 0;
+let playerID = 1;
 
 const gameSystem = new GameSystem();
+const regEx = new RegEx();
 
 
 // Server Connection
@@ -69,23 +71,38 @@ const onConnect = (socket) => {
 
    
    // ========== Init Player ==========
-   socket.emit("initClient", player.name);
+   socket.emit("initClient", { id: player.id, name: player.name});
+   socket.emit("gamesList", gameSystem.initPack());
+
    
+   // ========== Create New Game ==========
    socket.on("addNewGame", (gameName) => {
+      if(gameName && regEx.normalText.test(gameName)) {
 
-      const oneGame = new OneGame(gameName);
-      gameSystem.gamesList[player.id] = oneGame;
-      gameSystem.gamesCount++;
-
-      serverSync();
+         const newGame = new NewGame(player.id, gameName);
+         gameSystem.gamesArray.push(newGame);
+         gameSystem.gamesCount++;
+         
+         serverSync(newGame);
+      }
    });
    
+   
+   // ========== Change Player Name ==========
+   socket.on("changeName", (playerName) => {
+      if(playerName && regEx.normalText.test(playerName)) {
+         
+         player.name = playerName;
+      }
+   });
 
 
-   // ========== Chat ==========
-   // socket.on("generalMessage", (textMessage) => {
-   //    for(let i in socketList) socketList[i].emit("addMessage_General", `${player.name}: ${textMessage}`);
-   // });
+   // ========== Chat Message ==========
+   socket.on("generalMessage", (message) => {
+      if(message && regEx.specialText.test(message)) {
+         for(let i in socketList) socketList[i].emit("addMessageToGeneral", `${player.name}: ${message}`);
+      }
+   });
 }
 
 
@@ -99,12 +116,16 @@ const onDisconnect = (socket) => {
 // =====================================================================
 // Server Sync
 // =====================================================================
-const serverSync = () => {
+const serverSync = (newGame) => {
 
    for(let i in playerList) {
 
       let player = playerList[i];
       let socket = socketList[player.id];
-      socket.emit("gamesList", gameSystem.syncPack());
+
+      socket.emit("gamesList", {
+         gamesArray: [newGame],
+         gamesCount: gameSystem.gamesCount,
+      });
    }
 }

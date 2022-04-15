@@ -6,9 +6,6 @@ class Player {
       
       this.id = id;
       this.name = "";
-      this.runningGames = 0;
-      this.endedGames = 0;
-      this.totalGames = 0;
    }
 }
 

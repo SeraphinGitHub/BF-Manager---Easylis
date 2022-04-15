@@ -1,19 +1,12 @@
 
 "use strict"
 
-const initPlayerName = (socket) => {
-   socket.on("initClient", (servPlayerName) => {
-   
-      const playerName = chatDOM.playerName;
-      playerName.textContent = servPlayerName;
-   });
-}
+const editPlayerName = (socket) => {
 
-const editPlayerName = () => {
-
+   const nameField = chatDOM.nameField;
    const editNameBtn = chatDOM.editNameBtn;
    const editNameInput = chatDOM.editNameInput;
-   const playerName = chatDOM.playerName;
+   const editNameAlert = chatDOM.editNameAlert;
 
    const editBtnContent = editNameBtn.textContent;
 
@@ -24,24 +17,30 @@ const editPlayerName = () => {
       
       // Show InputField
       if(!isEditing) {
-         isEditing = true;
+
+         isEditing = true;       
          editNameBtn.textContent = "Valider";
-         editNameInput.value = playerName.textContent;
+         editNameInput.value = nameField.textContent;
 
          editNameBtn.classList.add("green-bgd");
-         playerName.classList.remove("display");
+         nameField.classList.remove("display");
          editNameInput.classList.add("display");
       }
       
       // Hide InputField
-      else {
+      else if(formValidation(editNameInput, editNameAlert)) {
+
          isEditing = false;
+
+         clientPlayer.name = editNameInput.value;
          editNameBtn.textContent = editBtnContent;
-         playerName.textContent = editNameInput.value;
+         nameField.textContent = clientPlayer.name;
 
          editNameBtn.classList.remove("green-bgd");
-         playerName.classList.add("display");
+         nameField.classList.add("display");
          editNameInput.classList.remove("display");
+
+         socket.emit("changeName", clientPlayer.name);
       }
    });
 }
@@ -57,16 +56,23 @@ const initSearchBar = () => {
    });
 }
 
-const initChatBar = (socket) => {
+const sendMessage = (socket) => {
 
-   const chatForm = chatDOM.createGameForm;
-   const chatInput = chatDOM.createGameInput;
+   const chatForm = chatDOM.chatForm;
+   const chatInput = chatDOM.chatInput;
 
    chatForm.addEventListener("submit", (event) => {
-      event.preventDefault();
       
-      socket.emit("addNewGame", chatInput.value);
+      event.preventDefault();
+      socket.emit("generalMessage", chatInput.value);
       chatInput.value = "";
+   });
+}
+
+const chatAddMessage = (socket) => {
+   
+   socket.on("addMessageToGeneral", (message) => {
+      chatDOM.chatList.innerHTML += `<li class="flexCenter message">${message}</li>`;
    });
 }
 
@@ -77,7 +83,8 @@ const initChatBar = (socket) => {
 const initChat = (socket) => {
    
    initPlayerName(socket);
-   editPlayerName();
+   editPlayerName(socket);
    initSearchBar();
-   initChatBar(socket);
+   sendMessage(socket);
+   chatAddMessage(socket);
 }

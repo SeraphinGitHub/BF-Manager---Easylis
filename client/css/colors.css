@@ -127,7 +127,6 @@ button {
 /* :Hover */
 .delete-game-btn:hover i {
    color: red;
-   font-size: 410%;
 }
 
 /* :Active */

@@ -60,17 +60,27 @@
 }
 
 
+/* ====== Swap Pages ====== */
+.games-swap-pages {
+   position: relative;
+   overflow: hidden;
+   height: 685px;
+   margin: 5px;
+}
+
+
 /* ====== Games List ====== */
 .games-list {
    visibility: hidden;
    overflow-y: scroll;
+
    align-content: flex-start;
    justify-content: flex-start;
    scrollbar-width: thin;
-   height: 620px;
-   margin: 40px;
+   height: 95%;
+   margin: 10px;
    margin-left: 0;
-   padding-left: 40px;
+   padding-left: 30px;
 }
 
 
@@ -95,19 +105,18 @@
 
 /* ====== :Active ====== */
 .games-list li:active {
-   transform: scale(98%);
    transition-duration: 0s;
 }
 
 .game-name {
+   align-items: center;
+   justify-content: space-around;
    height: 90%;
-   padding-left: 50px;
 }
 
 .game-name p {
    justify-content: flex-start;
-   width: 82%;
-   padding-left: 50px;
+   width: 30%;
    font-size: 135%;
 }
 
@@ -122,6 +131,24 @@
    font-size: 220%;
 }
 
+.enter-game-btn {
+   width: 15%;
+   height: 35px;
+   font-size: 18px;
+   text-shadow: black 0px 0px 7px;
+}
+
+/* ====== :Hover ====== */
+.enter-game-btn:hover {
+   transform: scale(110%);
+}
+
+/* ====== :Active ====== */
+.enter-game-btn:active {
+   transform: scale(100%);
+   transition-duration: 0s;
+}
+
 .delete-game-btn i {
    font-size: 300%;
 }
@@ -130,6 +157,11 @@
    visibility: hidden;
    border: none;
    background: none;
+}
+
+/* ====== :Hover ====== */
+.delete-game-btn:hover i {
+   font-size: 370%;
 }
 
 
@@ -141,7 +173,7 @@
    overflow: hidden;
    position: absolute;
    align-content: flex-start;
-   top: 45px;
+   top: 10px;
    left: 50%;
    transform: translate(-50%);
 }

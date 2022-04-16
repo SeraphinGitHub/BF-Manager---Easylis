@@ -25,37 +25,29 @@ const initGameCount = (count) => {
 
 const gameListTemplate = (game) => {
 
-   let runningStatus;
-   let endedStatus;
-   let deleteStatus;
-   let bgdColor;
+   let runningStatus = "display";
+   let endedStatus = "";
+   // let ownGameStatus = "";
+   let bgdColor = "running-bgd";
+   let joinBgdColor = "green-bgd";
+   
+   // ******************************************
+   let ownGameStatus = "visible";
+   // ******************************************
 
    
    // Toggle game status
-   if(game.status) {
-      runningStatus = "display";
-      endedStatus = "";
-      deleteStatus = "display";
-      bgdColor = "running-bgd";
-   }
-
-   else {
+   if(!game.status) {
       runningStatus = "";
       endedStatus = "display";
-      deleteStatus = "";
       bgdColor = "ended-bgd";
+      joinBgdColor = "ended-bgd";
    }
 
-   
    // Toggle delete button
    if(game.playerID === clientPlayer.id) {
-      deleteStatus = "visible";
+      ownGameStatus = "visible";
    }
-
-   else {
-      deleteStatus = "";
-   }
-
 
    const gameTemplate = `
       <li class="flexCenter" id="${game.playerID}">
@@ -69,7 +61,11 @@ const gameListTemplate = (game) => {
 
             <p class="flexCenter">${game.name}</p>
 
-            <button class="delete-game-btn ${deleteStatus}">
+            <button class="flexCenter green-bgd borders enter-game-btn ${ownGameStatus} ${joinBgdColor}">
+               Rejoindre
+            </button>
+
+            <button class="delete-game-btn ${ownGameStatus}">
                <figure class="flexCenter">
                   <i class="display fas fa-times-circle"></i>
                </figure>
@@ -83,10 +79,57 @@ const gameListTemplate = (game) => {
 }
 
 const generateGameList = (socket) => {
+   let eventsArray = [];
+
    socket.on("gamesList", (syncPack) => {
-      
       syncPack.gamesArray.forEach(game => gameListTemplate(game));
       initGameCount(syncPack.gamesCount);
+      selectGameTag(socket, eventsArray);
+   });
+}
+
+const selectGameTag = (socket, eventsArray) => {
+   
+   let allGamesTags = document.querySelectorAll(".games-list li");
+
+   allGamesTags.forEach(tag => {
+      
+      if(!eventsArray.includes(tag)) {
+         eventsArray.push(tag);
+
+         const backCover = menuDOM.gamesSwapPages.querySelector(".back-cover");
+
+         const tagName = tag.querySelector(".game-name p");
+         const joinBtn = tag.querySelector(".enter-game-btn");
+         const deleteBtn = tag.querySelector(".delete-game-btn");
+
+         // Join player own Game
+         joinBtn.addEventListener("click", () => {
+            socket.emit("enterGame", ({
+               id: tag.id,
+               name: tagName.textContent + ": Rejoindre",
+            }));
+
+            backCover.classList.remove("slide");
+            
+            setTimeout(() => {
+               let gameNameBtn = document.querySelectorAll(".game-name button");
+               gameNameBtn.forEach(btn => btn.classList.remove("visible"));
+               
+               menuDOM.gamesList.classList.remove("visible");
+               backCover.classList.add("slide");
+               menuDOM.game.classList.add("visible");
+            }, 1000);
+         });
+
+         // Delete player own Game
+         deleteBtn.addEventListener("click", () => {
+            socket.emit("deleteGame", ({
+               id: tag.id,
+               name: tagName.textContent + ": Delete",
+            }));                  
+         });
+      }
    });
 }
 
@@ -97,6 +140,5 @@ const generateGameList = (socket) => {
 const initMenu = (socket) => {
 
    initCreateGame(socket);
-   initGameCount(0);
    generateGameList(socket);
 }

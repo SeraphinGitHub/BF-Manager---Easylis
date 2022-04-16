@@ -7,8 +7,10 @@ const menuDOM = {
    createGameForm: document.querySelector(".create-game"),
    createGameInput: document.querySelector(".create-game input"),
    createGameAlert: document.querySelector(".create-game .alert-message"),
+   gamesSwapPages: document.querySelector(".games-swap-pages"),
    gamesCount: document.querySelector(".games-count"),
    gamesList: document.querySelector(".games-list"),
+   game: document.querySelector(".game"),
 }
 
 const chatDOM = {

@@ -86,6 +86,20 @@ const onConnect = (socket) => {
          serverSync(newGame);
       }
    });
+
+
+   // ========== Enter Game ==========
+   socket.on("enterGame", (game) => {
+      
+      console.log(game); // ******************************************************
+   });
+
+
+   // ========== Delete Game ==========
+   socket.on("deleteGame", (game) => {
+      
+      console.log(game); // ******************************************************
+   });
    
    
    // ========== Change Player Name ==========

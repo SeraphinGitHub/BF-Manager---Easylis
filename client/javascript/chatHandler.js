@@ -82,7 +82,6 @@ const chatAddMessage = (socket) => {
 // =====================================================================
 const initChat = (socket) => {
    
-   initPlayerName(socket);
    editPlayerName(socket);
    initSearchBar();
    sendMessage(socket);

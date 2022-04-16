@@ -23,6 +23,10 @@ button {
    background: linear-gradient(to bottom right, pink, red);
 }
 
+.orange-bgd {
+   background: linear-gradient(to top right, rgb(255, 94, 0), rgb(255, 217, 0));
+}
+
 .violet-bgd {
    background: linear-gradient(to bottom right, violet, darkviolet);
 }
@@ -38,7 +42,7 @@ button {
 .create-game button:hover,
 .games-list li:hover,
 .player-name button:hover,
-.quit-game:hover {
+.quit-game-btn:hover {
    box-shadow: grey 5px 5px 5px;
 }
 
@@ -49,7 +53,7 @@ button {
 .create-game button:active,
 .games-list li:active,
 .player-name button:active,
-.quit-game:active {
+.quit-game-btn:active {
    box-shadow: rgb(75, 75, 75) 5px 5px 5px;
 }
 
@@ -136,12 +140,12 @@ button {
 
 
 /* ====== Game ====== */
-.quit-game {
+.quit-game-btn {
    color: black;
 }
 
 /* :Active */
-.quit-game:active {
+.quit-game-btn:active {
    background: linear-gradient(to bottom right, rgb(255, 104, 129), rgb(190, 0, 0));
 }
 

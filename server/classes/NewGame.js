@@ -7,6 +7,7 @@ class NewGame {
       this.playerID = playerID;
       this.status = true;
       this.name = gameName;
+      this.connectedPlayers = {};
    }
 }
 

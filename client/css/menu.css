@@ -52,6 +52,7 @@
    margin-top: 20px;
 }
 
+
 /* ====== Header ====== */
 .games-header {
    justify-content: space-between;
@@ -108,26 +109,27 @@
    transition-duration: 0s;
 }
 
-.game-name {
+.game-tag {
    align-items: center;
    justify-content: space-around;
    height: 90%;
 }
 
-.game-name p {
+.game-tag p {
    justify-content: flex-start;
    width: 30%;
    font-size: 135%;
 }
 
-.game-name figure {
+.game-tag figure {
    background-color: white;
    border-radius: 50%;
    height: 25px;
    width: 25px;
 }
 
-.game-name i {
+.game-tag i {
+   display: none;
    font-size: 220%;
 }
 
@@ -170,15 +172,39 @@
 /* ============================================ */
 .game {
    visibility: hidden;
-   overflow: hidden;
    position: absolute;
    align-content: flex-start;
    top: 10px;
    left: 50%;
+   width: 95%;
    transform: translate(-50%);
 }
 
+
+/* ====== Title Container ====== */
+.game-title {
+   justify-content: space-between;
+   height: auto;
+   width: 80%;
+}
+
+.game-name {
+   height: 45px;
+   width: 55%;
+   font-size: 20px;
+}
+
+.quit-game-btn {
+   height: 50px;
+   width: 30%;
+   font-size: 20px;
+}
+
+
+/* ====== Figure ====== */
 .game figure {
+   margin: 17px;
+   height: 480px;
    box-shadow: black 0px 0px 10px;
 }
 
@@ -187,9 +213,28 @@
    width: 100%;
 }
 
-.quit-game {
-   height: 50px;
-   width: 25%;
+
+/* ====== Players Specs ====== */
+.game-players {
+   position: relative;
+   justify-content: space-between;
+   align-content: space-between;
+   height: 100px;
+   width: 80%;
+}
+
+.player-plate {
+   height: 40px;
+   width: 35%;
    font-size: 20px;
-   margin-bottom: 25px;
+}
+
+.versus {
+   position: absolute;
+   height: 60px;
+   width: 21%;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   font-size: 20px;
 }

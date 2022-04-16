@@ -6,5 +6,6 @@ class ClientPlayer {
 
       this.id;
       this.name;
+      this.gameName;
    }
 }

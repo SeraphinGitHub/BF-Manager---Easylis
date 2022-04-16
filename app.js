@@ -76,7 +76,7 @@ const onConnect = (socket) => {
 
    
    // ========== Create New Game ==========
-   socket.on("addNewGame", (gameName) => {
+   socket.on("createGame", (gameName) => {
       if(gameName && regEx.normalText.test(gameName)) {
 
          const newGame = new NewGame(player.id, gameName);
@@ -88,20 +88,35 @@ const onConnect = (socket) => {
    });
 
 
-   // ========== Enter Game ==========
-   socket.on("enterGame", (game) => {
-      
-      console.log(game); // ******************************************************
-   });
-
-
    // ========== Delete Game ==========
-   socket.on("deleteGame", (game) => {
+   socket.on("deleteGame", (clientGame) => {
       
-      console.log(game); // ******************************************************
+      console.log(clientGame); // ******************************************************
+   });
+
+
+   // ========== Enter Game ==========
+   socket.on("enterGame", (clientGame) => {
+      
+      gameSystem.gamesArray.forEach(game => {
+
+         if(game.name === clientGame.gameName
+         && Object.keys(game.connectedPlayers).length < 2) {
+            
+            game.connectedPlayers[clientGame.playerID] = clientGame.playerName;
+            socket.emit("gameJoined", (game.connectedPlayers));
+         }
+      });
+   });
+
+
+   // ========== Quit Game ==========
+   socket.on("quitGame", (clientGame) => {
+      
+      console.log(clientGame); // ******************************************************
    });
    
-   
+
    // ========== Change Player Name ==========
    socket.on("changeName", (playerName) => {
       if(playerName && regEx.normalText.test(playerName)) {

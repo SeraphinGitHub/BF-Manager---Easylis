@@ -8,9 +8,12 @@ const menuDOM = {
    createGameInput: document.querySelector(".create-game input"),
    createGameAlert: document.querySelector(".create-game .alert-message"),
    gamesSwapPages: document.querySelector(".games-swap-pages"),
+   backCover: document.querySelector(".games-swap-pages .back-cover"),
    gamesCount: document.querySelector(".games-count"),
    gamesList: document.querySelector(".games-list"),
    game: document.querySelector(".game"),
+   quitGameBtn: document.querySelector(".quit-game-btn"),
+   CSSduration: 1000, // Milliseconds
 }
 
 const chatDOM = {
@@ -71,8 +74,7 @@ const initPlayer = (socket) => {
       clientPlayer.id = initPack.id;
       clientPlayer.name = initPack.name;
       
-      const nameField = chatDOM.nameField;
-      nameField.textContent = clientPlayer.name;
+      chatDOM.nameField.textContent = clientPlayer.name;
    });
 }
 

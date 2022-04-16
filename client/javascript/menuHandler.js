@@ -1,26 +1,22 @@
 
 "use strict"
 
-const initCreateGame = (socket) => {
-
-   const createGameForm = menuDOM.createGameForm;
+const createGame = (socket) => {
    const createGameInput = menuDOM.createGameInput;
-   const createGameAlert = menuDOM.createGameAlert;
 
-   createGameForm.addEventListener("submit", (event) => {
+   menuDOM.createGameForm.addEventListener("submit", (event) => {
       event.preventDefault();
 
-      if(formValidation(createGameInput, createGameAlert)) {
-         socket.emit("addNewGame", createGameInput.value);
+      if(formValidation(createGameInput, menuDOM.createGameAlert)) {
+         socket.emit("createGame", createGameInput.value);
          createGameInput.value = "";
       }
    });
 }
 
-const initGameCount = (count) => {  
+const setGameCount = (count) => {  
 
-   const gamesCount = menuDOM.gamesCount;
-   gamesCount.textContent = `Parties en cour: ${count}`
+   menuDOM.gamesCount.textContent = `Parties en cour: ${count}`
 }
 
 const gameListTemplate = (game) => {
@@ -53,7 +49,7 @@ const gameListTemplate = (game) => {
       <li class="flexCenter" id="${game.playerID}">
          <div class="back-cover slide"></div>
          
-         <div class="flexCenter borders game-name ${bgdColor}">
+         <div class="flexCenter borders game-tag ${bgdColor}">
             <figure class="flexCenter">
                <i class="running-icon ${runningStatus} fas fa-check-square"></i>
                <i class="ended-icon ${endedStatus} fas fa-times-square"></i>
@@ -83,53 +79,95 @@ const generateGameList = (socket) => {
 
    socket.on("gamesList", (syncPack) => {
       syncPack.gamesArray.forEach(game => gameListTemplate(game));
-      initGameCount(syncPack.gamesCount);
+      setGameCount(syncPack.gamesCount);
       selectGameTag(socket, eventsArray);
    });
 }
 
 const selectGameTag = (socket, eventsArray) => {
-   
    let allGamesTags = document.querySelectorAll(".games-list li");
 
    allGamesTags.forEach(tag => {
-      
       if(!eventsArray.includes(tag)) {
+         
          eventsArray.push(tag);
-
-         const backCover = menuDOM.gamesSwapPages.querySelector(".back-cover");
-
-         const tagName = tag.querySelector(".game-name p");
-         const joinBtn = tag.querySelector(".enter-game-btn");
-         const deleteBtn = tag.querySelector(".delete-game-btn");
-
-         // Join player own Game
-         joinBtn.addEventListener("click", () => {
-            socket.emit("enterGame", ({
-               id: tag.id,
-               name: tagName.textContent + ": Rejoindre",
-            }));
-
-            backCover.classList.remove("slide");
-            
-            setTimeout(() => {
-               let gameNameBtn = document.querySelectorAll(".game-name button");
-               gameNameBtn.forEach(btn => btn.classList.remove("visible"));
-               
-               menuDOM.gamesList.classList.remove("visible");
-               backCover.classList.add("slide");
-               menuDOM.game.classList.add("visible");
-            }, 1000);
-         });
-
-         // Delete player own Game
-         deleteBtn.addEventListener("click", () => {
-            socket.emit("deleteGame", ({
-               id: tag.id,
-               name: tagName.textContent + ": Delete",
-            }));                  
-         });
+         const tagName = tag.querySelector(".game-tag p");
+         enterGame(socket, tag, tagName);
+         deleteGame(socket, tag, tagName);
       }
+   });
+}
+
+const enterGame = (socket, tag, tagName) => {
+
+   const gameName = menuDOM.game.querySelector(".game-name");
+   const joinBtn = tag.querySelector(".enter-game-btn");
+   
+   joinBtn.addEventListener("click", () => {
+
+      clientPlayer.gameName = tagName.textContent;
+      gameName.textContent = tagName.textContent;
+      menuDOM.backCover.classList.remove("slide");
+
+      // Send Client Data
+      socket.emit("enterGame", ({
+         playerID: clientPlayer.id,
+         playerName: clientPlayer.name,
+         gameName: tagName.textContent,
+      }));
+
+      // Receive Server Data
+      socket.on("gameJoined", (connectedPlayers) => {
+         
+         // DOM element players name, connected status, versus
+         console.log(connectedPlayers); // ******************************************************
+      });
+      
+      // Back Cover Slide Animation
+      setTimeout(() => {
+         let gameTagBtn = document.querySelectorAll(".game-tag button");
+         gameTagBtn.forEach(btn => btn.classList.remove("visible"));
+         
+         menuDOM.gamesList.classList.remove("visible");
+         menuDOM.backCover.classList.add("slide");
+         menuDOM.game.classList.add("visible");
+      }, menuDOM.CSSduration);
+   });
+
+
+}
+
+const deleteGame = (socket, tag, tagName) => {
+   const deleteBtn = tag.querySelector(".delete-game-btn");
+   
+   deleteBtn.addEventListener("click", () => {
+      socket.emit("deleteGame", ({
+         playerID: tag.id,
+         name: tagName.textContent + ": Delete",
+      }));                  
+   });
+}
+
+const quitGame = (socket) => {
+
+   menuDOM.quitGameBtn.addEventListener("click", () => {
+      menuDOM.backCover.classList.remove("slide");
+
+      // Send Client Data
+      socket.emit("quitGame", ({
+         playerID: clientPlayer.id,
+         name: clientPlayer.gameName + ": Quitter",
+      }));
+      
+      // Back Cover Slide Animation
+      setTimeout(() => {
+         let gameTagBtn = document.querySelectorAll(".game-tag button");
+         gameTagBtn.forEach(btn => btn.classList.add("visible"));
+         
+         menuDOM.gamesList.classList.add("visible");
+         menuDOM.backCover.classList.add("slide");
+         menuDOM.game.classList.remove("visible");
+      }, menuDOM.CSSduration);
    });
 }
 
@@ -139,6 +177,7 @@ const selectGameTag = (socket, eventsArray) => {
 // =====================================================================
 const initMenu = (socket) => {
 
-   initCreateGame(socket);
+   createGame(socket);
    generateGameList(socket);
+   quitGame(socket);
 }

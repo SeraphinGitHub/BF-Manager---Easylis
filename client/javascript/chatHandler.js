@@ -6,10 +6,8 @@ const editPlayerName = (socket) => {
    const nameField = chatDOM.nameField;
    const editNameBtn = chatDOM.editNameBtn;
    const editNameInput = chatDOM.editNameInput;
-   const editNameAlert = chatDOM.editNameAlert;
-
+   
    const editBtnContent = editNameBtn.textContent;
-
    let isEditing = false;
 
    // Toggle player name InputField
@@ -28,7 +26,7 @@ const editPlayerName = (socket) => {
       }
       
       // Hide InputField
-      else if(formValidation(editNameInput, editNameAlert)) {
+      else if(formValidation(editNameInput, chatDOM.editNameAlert)) {
 
          isEditing = false;
 
@@ -46,23 +44,18 @@ const editPlayerName = (socket) => {
 }
 
 const initSearchBar = () => {
-
-   const searchBar = chatDOM.searchBar;
    const searchBarInput = chatDOM.searchBarInput;
 
-   searchBar.addEventListener("submit", (event) => {
+   chatDOM.searchBar.addEventListener("submit", (event) => {
       event.preventDefault();
       searchBarInput.value = "";
    });
 }
 
 const sendMessage = (socket) => {
-
-   const chatForm = chatDOM.chatForm;
    const chatInput = chatDOM.chatInput;
 
-   chatForm.addEventListener("submit", (event) => {
-      
+   chatDOM.chatForm.addEventListener("submit", (event) => {
       event.preventDefault();
       socket.emit("generalMessage", chatInput.value);
       chatInput.value = "";

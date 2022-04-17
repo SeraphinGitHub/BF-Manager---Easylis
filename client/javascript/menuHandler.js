@@ -1,37 +1,15 @@
 
 "use strict"
 
-const createGame = (socket) => {
-   const createGameInput = menuDOM.createGameInput;
-
-   menuDOM.createGameForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      if(formValidation(createGameInput, menuDOM.createGameAlert)) {
-         socket.emit("createGame", createGameInput.value);
-         createGameInput.value = "";
-      }
-   });
-}
-
-const setGameCount = (count) => {  
-
-   menuDOM.gamesCount.textContent = `Parties en cour: ${count}`
-}
-
+// Generate DOM
 const gameListTemplate = (game) => {
 
    let runningStatus = "display";
    let endedStatus = "";
-   // let ownGameStatus = "";
+   let ownGameStatus = "";
    let bgdColor = "running-bgd";
    let joinBgdColor = "green-bgd";
-   
-   // ******************************************
-   let ownGameStatus = "visible";
-   // ******************************************
 
-   
    // Toggle game status
    if(!game.status) {
       runningStatus = "";
@@ -41,12 +19,12 @@ const gameListTemplate = (game) => {
    }
 
    // Toggle delete button
-   if(game.playerID === clientPlayer.id) {
+   if(game.player_id === clientPlayer.id) {
       ownGameStatus = "visible";
    }
 
    const gameTemplate = `
-      <li class="flexCenter" id="${game.playerID}">
+      <li class="flexCenter" id="${game.player_id}">
          <div class="back-cover slide"></div>
          
          <div class="flexCenter borders game-tag ${bgdColor}">
@@ -75,26 +53,77 @@ const gameListTemplate = (game) => {
 }
 
 const generateGameList = (socket) => {
-   let eventsArray = [];
+   let tagsArray = [];
+   let renderGameArray = [];
 
    socket.on("gamesList", (syncPack) => {
-      syncPack.gamesArray.forEach(game => gameListTemplate(game));
-      setGameCount(syncPack.gamesCount);
-      selectGameTag(socket, eventsArray);
+      if(syncPack.gamesArray) {
+      
+         let allGamesTags = document.querySelectorAll(".games-list li");
+         let currentGamesArray = [];
+
+         syncPack.gamesArray.forEach(game => {
+            currentGamesArray.push(game.name);
+            
+            if(!renderGameArray.includes(game.name)) {
+               renderGameArray.push(game.name);
+               gameListTemplate(game);
+            }
+         });
+         
+         allGamesTags.forEach(tag => {
+            const tagName = tag.querySelector(".game-tag p").textContent;
+            if(!currentGamesArray.includes(tagName)) tag.remove();
+         });
+         
+         setGameCount(syncPack.gamesCount);
+         selectGameTag(socket, tagsArray);
+      }
    });
 }
 
-const selectGameTag = (socket, eventsArray) => {
+const setGameCount = (count) => {  
+
+   menuDOM.gamesCount.textContent = `Parties en cour: ${count}`
+}
+
+const selectGameTag = (socket, tagsArray) => {
    let allGamesTags = document.querySelectorAll(".games-list li");
 
    allGamesTags.forEach(tag => {
-      if(!eventsArray.includes(tag)) {
+      if(!tagsArray.includes(tag)) {
          
-         eventsArray.push(tag);
-         const tagName = tag.querySelector(".game-tag p");
+         tagsArray.push(tag);
+         const tagName = tag.querySelector(".game-tag p").textContent;
          enterGame(socket, tag, tagName);
          deleteGame(socket, tag, tagName);
       }
+   });
+}
+
+
+// Game Tags States
+const createGame = (socket) => {
+   const createGameInput = menuDOM.createGameInput;
+
+   menuDOM.createGameForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      if(formValidation(createGameInput, menuDOM.createGameAlert)) {
+
+         socket.emit("createGame", {
+            playerID: clientPlayer.id,
+            gameName: createGameInput.value,
+         });
+      }
+   });
+
+   socket.on("newGameDenied", (errorMessage) => {
+      popUpAlert(menuDOM.createGameAlert, errorMessage)
+   });
+
+   socket.on("newGameSuccess", () => {
+      createGameInput.value = "";
    });
 }
 
@@ -105,15 +134,15 @@ const enterGame = (socket, tag, tagName) => {
    
    joinBtn.addEventListener("click", () => {
 
-      clientPlayer.gameName = tagName.textContent;
-      gameName.textContent = tagName.textContent;
+      clientPlayer.gameName = tagName;
+      gameName.textContent = tagName;
       menuDOM.backCover.classList.remove("slide");
 
       // Send Client Data
       socket.emit("enterGame", ({
          playerID: clientPlayer.id,
          playerName: clientPlayer.name,
-         gameName: tagName.textContent,
+         gameName: tagName,
       }));
 
       // Receive Server Data
@@ -139,12 +168,16 @@ const enterGame = (socket, tag, tagName) => {
 
 const deleteGame = (socket, tag, tagName) => {
    const deleteBtn = tag.querySelector(".delete-game-btn");
-   
+
    deleteBtn.addEventListener("click", () => {
+      
       socket.emit("deleteGame", ({
-         playerID: tag.id,
-         name: tagName.textContent + ": Delete",
-      }));                  
+         playerID: clientPlayer.id,
+         tagID: Number(tag.id),
+         name: tagName,
+      }));
+   
+      socket.on("deleteGameSuccess", () => tag.remove());
    });
 }
 

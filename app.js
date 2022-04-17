@@ -11,7 +11,7 @@ const io = new Server(server);
 
 
 // =====================================================================
-// App init
+// Init Server
 // =====================================================================
 app.get("/", (req, res) => {
    res.sendFile(__dirname + "/client/index.html");
@@ -25,23 +25,15 @@ server.listen(process.env.PORT || 3000, () => {
 
 
 // =====================================================================
-// Import Files
-// =====================================================================
-const GameSystem = require("./server/classes/GameSystem.js"); 
-const Player = require("./server/classes/Player.js"); 
-const NewGame = require("./server/classes/NewGame.js"); 
-const RegEx = require("./server/classes/RegEx.js"); 
-
-
-// =====================================================================
 // Init Client
 // =====================================================================
+const GameSystem = require("./server/classes/GameSystem.js"); 
+const gameSystem = new GameSystem();
+gameSystem.initDB();
+
 let socketList = {};
 let playerList = {};
-let playerID = 1;
-
-const gameSystem = new GameSystem();
-const regEx = new RegEx();
+let counterID = 1;
 
 
 // Server Connection
@@ -49,7 +41,7 @@ io.on("connection", (socket) => {
    // console.log("User connected !");
 
    // ==========  Generate ID  ==========
-   socket.id = playerID++;
+   socket.id = counterID++;
    socketList[socket.id] = socket;
    onConnect(socket);
 
@@ -65,96 +57,56 @@ io.on("connection", (socket) => {
 // Player connection
 const onConnect = (socket) => {
 
-   const player = new Player(socket.id);
-   playerList[socket.id] = player;
-   player.name = `Joueur ${player.id}`;
-
-   
    // ========== Init Player ==========
-   socket.emit("initClient", { id: player.id, name: player.name});
-   socket.emit("gamesList", gameSystem.initPack());
-
+   gameSystem.createNewPlayer(socket, playerList);
+   serverSync();
    
-   // ========== Create New Game ==========
-   socket.on("createGame", (gameName) => {
-      if(gameName && regEx.normalText.test(gameName)) {
-
-         const newGame = new NewGame(player.id, gameName);
-         gameSystem.gamesArray.push(newGame);
-         gameSystem.gamesCount++;
-         
-         serverSync(newGame);
-      }
-   });
-
-
-   // ========== Delete Game ==========
-   socket.on("deleteGame", (clientGame) => {
-      
-      console.log(clientGame); // ******************************************************
-   });
-
-
-   // ========== Enter Game ==========
-   socket.on("enterGame", (clientGame) => {
-      
-      gameSystem.gamesArray.forEach(game => {
-
-         if(game.name === clientGame.gameName
-         && Object.keys(game.connectedPlayers).length < 2) {
-            
-            game.connectedPlayers[clientGame.playerID] = clientGame.playerName;
-            socket.emit("gameJoined", (game.connectedPlayers));
-         }
-      });
-   });
-
-
-   // ========== Quit Game ==========
-   socket.on("quitGame", (clientGame) => {
-      
-      console.log(clientGame); // ******************************************************
-   });
+   // ========== Game States ==========
+   socket.on("createGame", (gameName) => gameSystem.createNewGame(socket, serverSync, gameName));
+   socket.on("deleteGame", (deleteObj) => gameSystem.deleteGame(socket, serverSync, deleteObj));
+   socket.on("enterGame", (clientGame) => gameSystem.enterGame(clientGame, socket));
+   socket.on("quitGame", (clientGame) => gameSystem.quitGame(clientGame));
    
 
    // ========== Change Player Name ==========
-   socket.on("changeName", (playerName) => {
-      if(playerName && regEx.normalText.test(playerName)) {
-         
-         player.name = playerName;
-      }
-   });
+   socket.on("changeName", (nameObj) => gameSystem.changeName(socket, nameObj));
 
 
    // ========== Chat Message ==========
-   socket.on("generalMessage", (message) => {
-      if(message && regEx.specialText.test(message)) {
-         for(let i in socketList) socketList[i].emit("addMessageToGeneral", `${player.name}: ${message}`);
-      }
-   });
+   socket.on("generalMessage", (message) => gameSystem.generalChat(message, socketList));
 }
 
 
 // Player disconnection
-const onDisconnect = (socket) => {
-   
-   delete playerList[socket.id];
-}
+const onDisconnect = (socket) => delete playerList[socket.id];
 
 
 // =====================================================================
 // Server Sync
 // =====================================================================
-const serverSync = (newGame) => {
+const serverSync = () => {
 
-   for(let i in playerList) {
+   const sql = `SELECT * FROM games`;
 
-      let player = playerList[i];
-      let socket = socketList[player.id];
+   // Get all games
+   gameSystem.conn.query(sql, (err, res) => {
+      if(err) console.log(err);
 
-      socket.emit("gamesList", {
-         gamesArray: [newGame],
-         gamesCount: gameSystem.gamesCount,
-      });
-   }
+      let responseArray = res.rows;
+      let gamesCount = 0;
+      
+      // Count only running Games
+      responseArray.forEach(game => { if(game.status === true) gamesCount++ });
+
+      // Send server data to all clients
+      for(let i in playerList) {
+         let player = playerList[i];
+         let socket = socketList[player.id];
+
+         socket.emit("gamesList", {
+            gamesArray: responseArray,
+            gamesCount: gamesCount,
+         });
+      }
+   });
 }

@@ -1,12 +1,12 @@
 {
   "name": "test-easylis",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "dependencies": {
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "nodemon": "^2.0.15",
+    "pg": "^8.7.3",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1"
   },
@@ -15,5 +15,15 @@
     "start": "app.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SeraphinGitHub/BF-Manager---Easylis.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/SeraphinGitHub/BF-Manager---Easylis/issues"
+  },
+  "homepage": "https://github.com/SeraphinGitHub/BF-Manager---Easylis#readme",
+  "description": ""
 }

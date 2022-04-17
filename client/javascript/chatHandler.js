@@ -28,18 +28,28 @@ const editPlayerName = (socket) => {
       // Hide InputField
       else if(formValidation(editNameInput, chatDOM.editNameAlert)) {
 
-         isEditing = false;
-
-         clientPlayer.name = editNameInput.value;
-         editNameBtn.textContent = editBtnContent;
-         nameField.textContent = clientPlayer.name;
-
-         editNameBtn.classList.remove("green-bgd");
-         nameField.classList.add("display");
-         editNameInput.classList.remove("display");
-
-         socket.emit("changeName", clientPlayer.name);
+         socket.emit("changeName", {
+            playerID: clientPlayer.id,
+            oldName: clientPlayer.name,
+            newName: editNameInput.value,
+         });
       }
+   });
+
+   socket.on("changeNameDenied", (errorMessage) => {
+      popUpAlert(chatDOM.editNameAlert, errorMessage)
+   });
+
+   socket.on("changeNameSuccess", () => {
+      isEditing = false;
+
+      clientPlayer.name = editNameInput.value;
+      editNameBtn.textContent = editBtnContent;
+      nameField.textContent = clientPlayer.name;
+
+      editNameBtn.classList.remove("green-bgd");
+      nameField.classList.add("display");
+      editNameInput.classList.remove("display");
    });
 }
 
@@ -57,7 +67,12 @@ const sendMessage = (socket) => {
 
    chatDOM.chatForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      socket.emit("generalMessage", chatInput.value);
+      
+      socket.emit("generalMessage", {
+         playerName: clientPlayer.name,
+         message: chatInput.value,
+      });
+
       chatInput.value = "";
    });
 }

@@ -69,8 +69,8 @@ const popUpAlert = (alertClass, message) => {
 }
 
 const initPlayer = (socket) => {
-   socket.on("initClient", (initPack) => {
    
+   socket.on("initClient", (initPack) => {
       clientPlayer.id = initPack.id;
       clientPlayer.name = initPack.name;
       

@@ -5,7 +5,7 @@ class NewGame {
    constructor(playerID, gameName) {
       
       this.playerID = playerID;
-      this.status = true;
+      this.status = "running";
       this.name = gameName;
       this.connectedPlayers = {};
    }

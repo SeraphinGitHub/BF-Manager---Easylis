@@ -66,6 +66,7 @@ body {
 }
 
 .alert-message {
+   z-index: 100;
    position: absolute;
    visibility: hidden;
    
@@ -100,7 +101,7 @@ body {
 
 .slide {
    left: 1100px;
-   animation: slide 1s linear;
+   animation: slide 1.2s linear;
 }
 
 @keyframes slide {

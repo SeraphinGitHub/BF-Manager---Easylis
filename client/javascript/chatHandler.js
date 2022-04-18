@@ -29,7 +29,6 @@ const editPlayerName = (socket) => {
       else if(formValidation(editNameInput, chatDOM.editNameAlert)) {
 
          socket.emit("changeName", {
-            playerID: clientPlayer.id,
             oldName: clientPlayer.name,
             newName: editNameInput.value,
          });

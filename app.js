@@ -27,13 +27,13 @@ server.listen(process.env.PORT || 3000, () => {
 // =====================================================================
 // Init Client
 // =====================================================================
-const GameSystem = require("./server/classes/GameSystem.js"); 
-const gameSystem = new GameSystem();
-gameSystem.initDB();
-
 let socketList = {};
 let playerList = {};
 let counterID = 1;
+
+const GameSystem = require("./server/classes/GameSystem.js"); 
+const gameSystem = new GameSystem(playerList, socketList);
+gameSystem.initDB();
 
 
 // Server Connection
@@ -56,16 +56,16 @@ io.on("connection", (socket) => {
 
 // Player connection
 const onConnect = (socket) => {
-
+   
    // ========== Init Player ==========
-   gameSystem.createNewPlayer(socket, playerList);
-   serverSync();
+   gameSystem.createNewPlayer(socket);
+   gameSystem.serverSync();
    
    // ========== Game States ==========
-   socket.on("createGame", (gameName) => gameSystem.createNewGame(socket, serverSync, gameName));
-   socket.on("deleteGame", (deleteObj) => gameSystem.deleteGame(socket, serverSync, deleteObj));
-   socket.on("enterGame", (clientGame) => gameSystem.enterGame(clientGame, socket));
-   socket.on("quitGame", (clientGame) => gameSystem.quitGame(clientGame));
+   socket.on("createGame", (gameName) => gameSystem.createNewGame(socket, gameName));
+   socket.on("deleteGame", (deleteObj) => gameSystem.deleteGame(socket, deleteObj));
+   socket.on("enterGame", (enterObj) => gameSystem.enterGame(enterObj));
+   socket.on("quitGame", (quitObj) => gameSystem.quitGame(quitObj, socket));
    
 
    // ========== Change Player Name ==========
@@ -73,40 +73,9 @@ const onConnect = (socket) => {
 
 
    // ========== Chat Message ==========
-   socket.on("generalMessage", (message) => gameSystem.generalChat(message, socketList));
+   socket.on("generalMessage", (message) => gameSystem.generalChat(message));
 }
 
 
 // Player disconnection
 const onDisconnect = (socket) => delete playerList[socket.id];
-
-
-// =====================================================================
-// Server Sync
-// =====================================================================
-const serverSync = () => {
-
-   const sql = `SELECT * FROM games`;
-
-   // Get all games
-   gameSystem.conn.query(sql, (err, res) => {
-      if(err) console.log(err);
-
-      let responseArray = res.rows;
-      let gamesCount = 0;
-      
-      // Count only running Games
-      responseArray.forEach(game => { if(game.status === true) gamesCount++ });
-
-      // Send server data to all clients
-      for(let i in playerList) {
-         let player = playerList[i];
-         let socket = socketList[player.id];
-
-         socket.emit("gamesList", {
-            gamesArray: responseArray,
-            gamesCount: gamesCount,
-         });
-      }
-   });
-}

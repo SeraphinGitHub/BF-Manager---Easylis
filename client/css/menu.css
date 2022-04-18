@@ -111,14 +111,37 @@
 
 .game-tag {
    align-items: center;
-   justify-content: space-around;
+   justify-content: space-between;
    height: 90%;
+   padding-left: 40px;
+   padding-right: 40px;
 }
 
-.game-tag p {
+.tag-name {
    justify-content: flex-start;
    width: 30%;
-   font-size: 135%;
+   font-size: 22px;
+   margin-left: 10px;
+}
+
+.tag-player-counter {
+   padding: 5px;
+   width: 5%;
+   font-size: 22px;
+}
+
+.tag-date {
+   position: relative;
+   width: 22%;
+   margin-left: 5px;
+   margin-right: 5px;
+}
+
+.tag-date .alert-message {
+   top: -3px;
+   left: 320px;
+   width: 110%;
+   height: 28px;
 }
 
 .game-tag figure {
@@ -136,6 +159,8 @@
 .enter-game-btn {
    width: 15%;
    height: 35px;
+   margin-left: 25px;
+   margin-right: 25px;
    font-size: 18px;
    text-shadow: black 0px 0px 7px;
 }

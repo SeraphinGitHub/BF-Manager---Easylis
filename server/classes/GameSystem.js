@@ -87,9 +87,11 @@ class GameSystem extends DataBase {
       
       if(deleteObj.playerID && typeof(deleteObj.playerID) === "number"
       && deleteObj.tagID && typeof(deleteObj.tagID) === "number"
-      && deleteObj.name && this.regEx.normalText.test(deleteObj.name)) {
+      && deleteObj.name && this.regEx.normalText.test(deleteObj.name)
+      && deleteObj.playerName && this.regEx.normalText.test(deleteObj.playerName)) {
 
-         if(deleteObj.playerID === deleteObj.tagID) {
+         if(deleteObj.playerID === deleteObj.tagID
+         || deleteObj.playerName === process.env.ADMIN_PLAYER_NAME) {
 
             const sql = `
                DELETE FROM games WHERE
@@ -98,8 +100,9 @@ class GameSystem extends DataBase {
    
             this.runQuery(sql)
             .then(() => {
+
                socket.emit("deleteGameSuccess");
-               this.serverSync();
+               this.serverSync(deleteObj.name);
 
             }).catch((err) => console.log(err));
          }
@@ -156,8 +159,8 @@ class GameSystem extends DataBase {
                }
             }
             
-            // If Game already full
-            else {
+            // If Game is full || ended
+            else if(gameStatus) {
                const errorMessage = "Partie déjà complète";
                socket.emit("joinGameDenied", (errorMessage));
             }
@@ -239,9 +242,14 @@ class GameSystem extends DataBase {
 
          const errorMessage = "Ce nom est déjà pris !";
 
-         this.runQuery(sql)
-         .then(() => socket.emit("changeNameSuccess"))
-         .catch(() => socket.emit("changeNameDenied", (errorMessage)))
+         if(nameObj.newName !== process.env.ADMIN_PLAYER_NAME) {
+
+            this.runQuery(sql)
+            .then(() => socket.emit("changeNameSuccess"))
+            .catch(() => socket.emit("changeNameDenied", (errorMessage)))
+         }
+
+         else socket.emit("changeNameSuccess");
       }
    }
 
@@ -254,6 +262,30 @@ class GameSystem extends DataBase {
          for(let i in this.socketList) {
             this.socketList[i].emit("addMessageToGeneral", `${messageObj.playerName}: ${messageObj.message}`);
          }
+      }
+   }
+
+   privateChat(socket, messageObj) {
+
+      if(messageObj.playerName && this.regEx.normalText.test(messageObj.playerName)
+      && messageObj.otherPlayerName && this.regEx.normalText.test(messageObj.otherPlayerName)
+      && messageObj.message && this.regEx.specialText.test(messageObj.message)) {
+
+         let sql = `SELECT id FROM players WHERE name = '${messageObj.otherPlayerName}'`;
+
+         this.runQuery(sql)
+         .then((otherPlayerID) => {
+
+            const prefix = "A > ";
+            let otherSocket = this.socketList[otherPlayerID];
+            
+            if(otherSocket) {
+               otherSocket.emit("addMessageToPrivate", `${messageObj.playerName}: ${messageObj.message}`);
+               socket.emit("addMessageToPrivate", `${prefix}${messageObj.otherPlayerName}: ${messageObj.message}`);
+            }
+            else socket.emit("addMessageToPrivate", `>${messageObj.otherPlayerName}< Est déconnecté !`);
+
+         }).catch((err) => console.log(err));
       }
    }
 
@@ -276,7 +308,7 @@ class GameSystem extends DataBase {
    }
    
    // Server Sync
-   serverSync() {
+   serverSync(gameName) {
 
       let sql = `SELECT * FROM games`;
 
@@ -297,7 +329,6 @@ class GameSystem extends DataBase {
                updated_at: this.dateFormat(game.updated_at),
             });
          });
-
          
          // Send server data to all clients
          for(let i in this.playerList) {
@@ -309,8 +340,9 @@ class GameSystem extends DataBase {
                gamesArray: gamesArray,
                gamesCount: gamesCount,
             });
-         }
 
+            if(gameName) socket.emit("clearTagsArrays", (gameName));
+         }
       }).catch((err) => console.log(err));
    }
 }

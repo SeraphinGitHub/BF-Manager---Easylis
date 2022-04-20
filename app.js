@@ -73,7 +73,8 @@ const onConnect = (socket) => {
 
 
    // ========== Chat Message ==========
-   socket.on("generalMessage", (message) => gameSystem.generalChat(message));
+   socket.on("generalMessage", (messageObj) => gameSystem.generalChat(messageObj));
+   socket.on("privateMessage", (messageObj) => gameSystem.privateChat(socket, messageObj));
 }
 
 

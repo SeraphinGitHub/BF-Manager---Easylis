@@ -1,13 +1,16 @@
 
 "use strict"
 
+let clickedTagsArray = [];
+let existingGamesArray = [];
+
 // Generate DOM
 const gameListTemplate = (game) => {
 
    let ownGameStatus = "";
 
    // Toggle delete button
-   // if(game.player_id === clientPlayer.id) ownGameStatus = "visible";
+   if(game.player_id === clientPlayer.id) ownGameStatus = "visible";
 
    const gameTemplate = `
       <li class="flexCenter" id="${game.player_id}">
@@ -46,47 +49,43 @@ const gameListTemplate = (game) => {
    gamesList.insertAdjacentHTML("beforeend", gameTemplate);
 }
 
-const generateGameList = (socket) => {
-   let tagsArray = [];
-   let existingTagsArray = [];
+const generateGameTags = (socket) => {
 
    socket.on("gamesList", (syncPack) => {
       if(syncPack.gamesArray) {
 
-         let tagsNameArray = [];
-         
-         // Render all none existing tags
-         syncPack.gamesArray.forEach(game => {
-            tagsNameArray.push(game.name);
+         let gamesNameArray = [];
 
-            if(!existingTagsArray.includes(game.name)) {
-               existingTagsArray.push(game.name);
+         // Receive all games sync package
+         syncPack.gamesArray.forEach(game => {
+            gamesNameArray.push(game.name);
+            
+            // Render all none existing games
+            if(!existingGamesArray.includes(game.name)) {
+               existingGamesArray.push(game.name);
                gameListTemplate(game);
-            }            
+            }
          });
          
-         
-         let allGamesTags = document.querySelectorAll(".games-list li");
+         let allGamesTag = document.querySelectorAll(".games-list li");
          
          // Update all existing tags
-         allGamesTags.forEach(tag => {
+         allGamesTag.forEach(tag => {
+            const tagName = tag.querySelector(".tag-name").textContent;
 
-            const tagName = tag.querySelector(".game-tag p").textContent;           
-
-            // Update game player counter
+            // Update tag player counter
             syncPack.gamesArray.forEach(game => gameState(tag, tagName, game));
             
-            
-            // Join game / Remove deleted game tag ==> On Click 
-            if(!tagsArray.includes(tag)) {
-               tagsArray.push(tag);
+            // Enter/Deleted game EventsListeners
+            if(!clickedTagsArray.includes(tagName)) {
+               clickedTagsArray.push(tagName);
                
                enterGame(socket, tag, tagName);
                deleteGame(socket, tag, tagName);
             }
 
             // Remove deleted Tags on Sync
-            if(!tagsNameArray.includes(tagName)) tag.remove();
+            if(!gamesNameArray.includes(tagName)) tag.remove();
          });
          
          setGameCount(syncPack.gamesCount);
@@ -103,12 +102,9 @@ const gameState = (tag, tagName, game) => {
    const enterGameBtn = tag.querySelector(".enter-game-btn");
    const dateState = tag.querySelector(".date-state");
    const dateTime = tag.querySelector(".date-time");
-   const deleteBtn = tag.querySelector(".delete-game-btn");
 
    if(game.name === tagName) {
       playerCounter.textContent = `${game.connected_players.length}/2`;
-      
-      // if(game.player_id === clientPlayer.id) deleteBtn.classList.add("visible");
       
       // Running Game
       if(game.status) {
@@ -241,21 +237,30 @@ const deleteGame = (socket, tag, tagName) => {
    deleteBtn.addEventListener("click", () => {
       
       socket.emit("deleteGame", ({
+         playerName: clientPlayer.name,
          playerID: clientPlayer.id,
          tagID: Number(tag.id),
          name: tagName,
       }));
-   
+
       socket.on("deleteGameSuccess", () => tag.remove());
+   });
+   
+   socket.on("clearTagsArrays", (gameName) => {
+      const clearArraysDelay = 100;
+
+      setTimeout(() => {
+         if(clickedTagsArray.includes(gameName)) removeIndex(clickedTagsArray, gameName);
+         if(existingGamesArray.includes(gameName)) removeIndex(existingGamesArray, gameName);         
+      }, clearArraysDelay);
    });
 }
 
 const quitGame = (socket) => {
 
    menuDOM.quitGameBtn.addEventListener("click", () => {
-
       menuDOM.backCover.classList.remove("slide");
-      
+
       socket.emit("quitGame", ({
          gameName: menuDOM.game.querySelector(".game-name").textContent,
          otherPlayerName: menuDOM.rightPlayerName.textContent,
@@ -263,24 +268,30 @@ const quitGame = (socket) => {
    });
 
    socket.on("quitGameSuccess", () => {
-     
-      // Back Cover Slide Animation
       setTimeout(() => {
-         let gameTagBtn = document.querySelectorAll(".game-tag button");
-         gameTagBtn.forEach(btn => btn.classList.add("visible"));
          
+         let allGamesTags = document.querySelectorAll(".games-list li");
+
+         // Display delete button
+         allGamesTags.forEach(tag => {
+            const deleteBtn = tag.querySelector(".delete-game-btn");
+            if(Number(tag.id) === clientPlayer.id) deleteBtn.classList.add("visible");
+         });
+
+         // Remove Pack
+         menuDOM.game.classList.remove("visible");
+         menuDOM.rightPlayerName.classList.remove("blue-bgd");
+         menuDOM.rightPlayerStatus.classList.remove("green-bgd");
+         
+         // Add Pack
          menuDOM.gamesList.classList.add("visible");
          menuDOM.backCover.classList.add("slide");
-         menuDOM.game.classList.remove("visible");
+         menuDOM.rightPlayerName.classList.add("orange-bgd");
+         menuDOM.rightPlayerStatus.classList.add("orange-bgd");
 
          menuDOM.rightPlayerName.textContent = "Vide";
          menuDOM.rightPlayerStatus.textContent = "Statu: En attente";
 
-         menuDOM.rightPlayerName.classList.add("orange-bgd");
-         menuDOM.rightPlayerName.classList.remove("blue-bgd");
-         menuDOM.rightPlayerStatus.classList.add("orange-bgd");
-         menuDOM.rightPlayerStatus.classList.remove("green-bgd");
-         
       }, menuDOM.CSSduration);
    });
 }
@@ -292,6 +303,6 @@ const quitGame = (socket) => {
 const initMenu = (socket) => {
 
    createGame(socket);
-   generateGameList(socket);
+   generateGameTags(socket);
    quitGame(socket);
 }

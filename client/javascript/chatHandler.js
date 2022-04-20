@@ -71,6 +71,12 @@ const sendMessage = (socket) => {
          playerName: clientPlayer.name,
          message: chatInput.value,
       });
+      
+      socket.emit("privateMessage", {
+         playerName: clientPlayer.name,
+         otherPlayerName: otherPlayerName,
+         message: chatInput.value,
+      });
 
       chatInput.value = "";
    });
@@ -78,9 +84,56 @@ const sendMessage = (socket) => {
 
 const chatAddMessage = (socket) => {
    
-   socket.on("addMessageToGeneral", (message) => {
-      chatDOM.chatList.innerHTML += `<li class="flexCenter message">${message}</li>`;
-   });
+   // socket.on("addMessageToGeneral", (message) => {
+   //    chatDOM.chatList.innerHTML += `<li class="flexCenter message">${message}</li>`;
+   // });
+
+   // socket.on("addMessageToPrivate", (message) => {
+   //    chatDOM.chatList.innerHTML += `<li class="flexCenter message">${message}</li>`;
+   // });
+
+   socket.on("addMessageToGeneral", (message) => getPlayerMessage(chatDOM.chatList, message));
+
+   socket.on("addMessageToPrivate", (message) => getPlayerMessage(chatDOM.chatList, message));
+}
+
+const getPlayerMessage = (chatChannel, message) => {
+   chatChannel.innerHTML += `<li class="flexCenter message">${message}</li>`;
+
+   const messageTag = document.getElementsByClassName("message");
+
+   for(let i = 0; i < messageTag.length; i++) {
+      let messageTagIndexed = messageTag[i];
+
+      messageTagIndexed.addEventListener("mousedown", (event) => {
+         if(event.which === 1) extractPlayerName(messageTagIndexed);
+      });
+   }
+}
+
+
+let otherPlayerName;
+
+const extractPlayerName = (messageTagIndexed) => {
+   const prefix = "A >";
+   const offlineStr = "< Est déconnecté !";
+   let messageText = messageTagIndexed.textContent;
+   
+   let receiverName;
+   let splitedName = messageText.split(": ")[0];
+   
+   if(splitedName.includes(prefix)) receiverName = splitedName.split(prefix)[1];
+   else receiverName = splitedName;
+   
+   if(receiverName !== ""
+   && receiverName !== clientPlayer.name
+   && !messageText.includes(offlineStr)) {
+
+      otherPlayerName = receiverName;
+
+      // receiverContent = `A : ${receiverName}`;
+      // chatInput.value = "";
+   }
 }
 
 

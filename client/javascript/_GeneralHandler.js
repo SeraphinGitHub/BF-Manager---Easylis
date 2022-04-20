@@ -62,13 +62,13 @@ const formValidation = (fieldClass, alertClass) => {
 
 const popUpAlert = (alertClass, message) => {
 
-   const duration = 2500; // ==> Milliseconds
+   const hideDelay = 2500; // ==> Milliseconds
    alertClass.classList.add("visible");
    alertClass.textContent = message;
 
    setTimeout(() => {
       alertClass.classList.remove("visible");
-   }, duration);
+   }, hideDelay);
 }
 
 const initPlayer = (socket) => {
@@ -81,6 +81,12 @@ const initPlayer = (socket) => {
    });
 }
 
+// Remove Array Index
+const removeIndex = (array, item) => {
+
+   let index = array.indexOf(item);
+   array.splice(index, 1);
+}
 
 // =====================================================================
 // Init Game Handler

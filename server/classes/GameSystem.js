@@ -102,7 +102,8 @@ class GameSystem extends DataBase {
             .then(() => {
 
                socket.emit("deleteGameSuccess");
-               this.serverSync(deleteObj.name);
+               this.serverSync();
+               this.emitToAllSockets("clearTagsArrays", deleteObj.name);
 
             }).catch((err) => console.log(err));
          }
@@ -245,11 +246,27 @@ class GameSystem extends DataBase {
          if(nameObj.newName !== process.env.ADMIN_PLAYER_NAME) {
 
             this.runQuery(sql)
-            .then(() => socket.emit("changeNameSuccess"))
-            .catch(() => socket.emit("changeNameDenied", (errorMessage)))
+            .then(() => {
+
+               for(let i in this.playerList) {
+                  let player = this.playerList[i];
+                  if(player.name === nameObj.oldName) player.name = nameObj.newName;
+               }  
+
+               socket.emit("changeNameSuccess");
+
+               this.emitToAllSockets("updateName", {
+                  oldName: nameObj.oldName,
+                  newName: nameObj.newName,
+               });
+
+            }).catch(() => socket.emit("changeNameDenied", (errorMessage)))
          }
 
-         else socket.emit("changeNameSuccess");
+         else {
+            socket.emit("changeNameSuccess");
+            socket.emit("adminName");
+         }
       }
    }
 
@@ -274,9 +291,10 @@ class GameSystem extends DataBase {
          let sql = `SELECT id FROM players WHERE name = '${messageObj.otherPlayerName}'`;
 
          this.runQuery(sql)
-         .then((otherPlayerID) => {
+         .then((res) => {
 
             const prefix = "A > ";
+            const otherPlayerID = res[0].id;
             let otherSocket = this.socketList[otherPlayerID];
             
             if(otherSocket) {
@@ -308,7 +326,7 @@ class GameSystem extends DataBase {
    }
    
    // Server Sync
-   serverSync(gameName) {
+   serverSync() {
 
       let sql = `SELECT * FROM games`;
 
@@ -317,7 +335,9 @@ class GameSystem extends DataBase {
       .then((allGames) => {
 
          let gamesArray = [];
+         let playersName = [];
          let gamesCount = 0;
+
 
          // Count only running Games + Format Dates
          allGames.forEach(game => {
@@ -329,21 +349,33 @@ class GameSystem extends DataBase {
                updated_at: this.dateFormat(game.updated_at),
             });
          });
-         
-         // Send server data to all clients
+
+
+         // Set all connected players name inside an array
          for(let i in this.playerList) {
-
             let player = this.playerList[i];
-            let socket = this.socketList[player.id];
+            playersName.push(player.name);
+         }         
 
-            socket.emit("gamesList", {
-               gamesArray: gamesArray,
-               gamesCount: gamesCount,
-            });
+         this.emitToAllSockets("gamesList", {
+            gamesArray: gamesArray,
+            gamesCount: gamesCount,
+            playersName: playersName,
+         });
 
-            if(gameName) socket.emit("clearTagsArrays", (gameName));
-         }
       }).catch((err) => console.log(err));
+   }
+
+   emitToAllSockets(channel, emitObj) {
+
+      // Send server data to all clients
+      for(let i in this.playerList) {
+
+         let player = this.playerList[i];
+         let socket = this.socketList[player.id];
+
+         socket.emit(channel, emitObj);
+      }
    }
 }
 

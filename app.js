@@ -79,4 +79,8 @@ const onConnect = (socket) => {
 
 
 // Player disconnection
-const onDisconnect = (socket) => delete playerList[socket.id];
+const onDisconnect = (socket) => {
+   
+   delete playerList[socket.id];
+   gameSystem.serverSync();
+};

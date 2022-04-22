@@ -78,7 +78,7 @@
 .chat-header,
 .search-bar,
 .chat-list {
-   margin-bottom: 17px;
+   margin-bottom: 15px;
 }
 
 .search-bar,
@@ -110,12 +110,30 @@
 }
 
 
+/* ====== Channels Button ====== */
+.chat-channels {
+   justify-content: space-between;
+   height: 50px;
+   width: 91%;
+   margin-bottom: -4px;
+}
+
+.chat-channels button {
+   height: 100%;
+   width: 30%;
+   font-size: 22px;
+   border-radius: 15px 15px 0px 0px;
+}
+
+
 /* ====== Messages List ====== */
 .chat-list {
+   display: none;
    align-content: flex-start;
    overflow-y: scroll;
    scrollbar-width: thin;
-   height: 550px;
+   height: 455px;
+   border-radius: 0px 0px 15px 15px;
 }
 
 .message {
@@ -127,8 +145,73 @@
 }
 
 
+/* ====== Receiver ====== */
+.receiver {
+   width: 60%;
+   height: 40px;
+   margin-bottom: 10px;
+   font-size: 20px;
+}
+
+
 /* ====== Chat InputField ====== */
 .chat-form {
    position: relative;
    width: 91%;
+}
+
+
+/* ====== Connected Player ====== */
+.connected-player {
+   justify-content: space-between;
+   height: 40px;
+   margin: 10px;
+   margin-bottom: 0px;
+}
+
+.connected-player p {
+   font-size: 20px;
+   width: 50%;
+   justify-content: flex-start;
+   padding-left: 30px;
+}
+
+.connected-player figure {
+   position: relative;
+   width: 40px;
+   height: 100%;
+   margin-right: 100px;
+}
+
+.connected-player figure i {
+   position: absolute;
+   height: 100%;
+   width: 100%;
+   top: 5px;
+}
+
+.connected-player .fas {
+   color: white;
+   font-size: 170%;
+}
+
+.connected-player .far {
+   color: black;
+   font-size: 180%;
+}
+
+/* ====== :Hover ====== */
+.connected-player figure:hover .fas {
+   color: red;
+}
+
+
+/* ====== :Active ====== */
+.connected-player figure:active .fas {
+   color: violet;
+}
+
+.connected-player figure:hover {
+   font-size: 120%;
+   cursor: pointer;
 }

@@ -12,7 +12,7 @@ const gameListTemplate = (game) => {
    // Toggle delete button
    if(game.player_id === clientPlayer.id) ownGameStatus = "visible";
 
-   const gameTemplate = `
+   const template = `
       <li class="flexCenter" id="${game.player_id}">
          <div class="back-cover slide"></div>
          
@@ -43,17 +43,15 @@ const gameListTemplate = (game) => {
          </div>
       </li>
    `;
-
-
-   const gamesList = menuDOM.gamesList;
-   gamesList.insertAdjacentHTML("beforeend", gameTemplate);
+   
+   menuDOM.gamesList.insertAdjacentHTML("beforeend", template);
 }
 
 const generateGameTags = (socket) => {
 
    socket.on("gamesList", (syncPack) => {
       if(syncPack.gamesArray) {
-
+         
          let gamesNameArray = [];
 
          // Receive all games sync package
@@ -71,7 +69,7 @@ const generateGameTags = (socket) => {
          
          // Update all existing tags
          allGamesTag.forEach(tag => {
-            const tagName = tag.querySelector(".tag-name").textContent;
+            let tagName = tag.querySelector(".tag-name").textContent;
 
             // Update tag player counter
             syncPack.gamesArray.forEach(game => gameState(tag, tagName, game));
@@ -296,6 +294,19 @@ const quitGame = (socket) => {
    });
 }
 
+const adminMode = (socket) => {
+
+   socket.on("adminName", () => {
+      let allGamesTags = document.querySelectorAll(".games-list li");
+
+      // Display delete button
+      allGamesTags.forEach(tag => {
+         const deleteBtn = tag.querySelector(".delete-game-btn");
+         deleteBtn.classList.add("visible");
+      });
+   });
+}
+
 
 // =====================================================================
 // Init Menu Handler
@@ -305,4 +316,5 @@ const initMenu = (socket) => {
    createGame(socket);
    generateGameTags(socket);
    quitGame(socket);
+   adminMode(socket);
 }

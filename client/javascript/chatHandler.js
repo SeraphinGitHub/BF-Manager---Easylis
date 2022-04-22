@@ -1,6 +1,10 @@
 
 "use strict"
 
+let selectedPlayer = "";
+let existingPlayerArray = [];
+let isGeneralChannel = true;
+
 const editPlayerName = (socket) => {
 
    const nameField = chatDOM.nameField;
@@ -67,73 +71,166 @@ const sendMessage = (socket) => {
    chatDOM.chatForm.addEventListener("submit", (event) => {
       event.preventDefault();
       
-      socket.emit("generalMessage", {
-         playerName: clientPlayer.name,
-         message: chatInput.value,
-      });
-      
-      socket.emit("privateMessage", {
-         playerName: clientPlayer.name,
-         otherPlayerName: otherPlayerName,
-         message: chatInput.value,
-      });
+      if(isGeneralChannel) {
+         socket.emit("generalMessage", {
+            playerName: clientPlayer.name,
+            message: chatInput.value,
+         });
+      }
 
+      else {
+         socket.emit("privateMessage", {
+            playerName: clientPlayer.name,
+            otherPlayerName: selectedPlayer,
+            message: chatInput.value,
+         });
+      }
+      
       chatInput.value = "";
    });
 }
 
 const chatAddMessage = (socket) => {
    
-   // socket.on("addMessageToGeneral", (message) => {
-   //    chatDOM.chatList.innerHTML += `<li class="flexCenter message">${message}</li>`;
-   // });
+   socket.on("addMessageToGeneral", (message) => {
+      chatDOM.generalChat.innerHTML += `<li class="flexCenter message">${message}</li>`;
+   });
 
-   // socket.on("addMessageToPrivate", (message) => {
-   //    chatDOM.chatList.innerHTML += `<li class="flexCenter message">${message}</li>`;
-   // });
-
-   socket.on("addMessageToGeneral", (message) => getPlayerMessage(chatDOM.chatList, message));
-
-   socket.on("addMessageToPrivate", (message) => getPlayerMessage(chatDOM.chatList, message));
+   socket.on("addMessageToPrivate", (message) => {
+      chatDOM.privateChat.innerHTML += `<li class="flexCenter message">${message}</li>`;
+   });
 }
 
-const getPlayerMessage = (chatChannel, message) => {
-   chatChannel.innerHTML += `<li class="flexCenter message">${message}</li>`;
+const toggleChatChannels = () => {
 
-   const messageTag = document.getElementsByClassName("message");
+   const receiverClass = chatDOM.receiver.classList;
 
-   for(let i = 0; i < messageTag.length; i++) {
-      let messageTagIndexed = messageTag[i];
+   // Toggle General Chat
+   chatDOM.generalChatBtn.addEventListener("click", () => {
 
-      messageTagIndexed.addEventListener("mousedown", (event) => {
-         if(event.which === 1) extractPlayerName(messageTagIndexed);
+      if(!chatDOM.generalChat.classList.contains("display")) {
+         chatDOM.generalChat.classList.add("display");
+         chatDOM.privateChat.classList.remove("display");
+         chatDOM.contactPanel.classList.remove("display");
+
+         receiverClass.add("general-bgd");
+         receiverClass.remove("private-bgd");
+         receiverClass.remove("contact-bgd");
+
+         chatDOM.receiver.textContent = "Destinataire: Tout le monde";
+      }
+
+      isGeneralChannel = true;
+   });
+
+
+   // Toggle Private Chat
+   chatDOM.privateChatBtn.addEventListener("click", () => {
+
+      if(!chatDOM.privateChat.classList.contains("display")) displayPrivateChat();
+      isGeneralChannel = false;
+   });
+
+
+   // Toggle Contact Panel
+   chatDOM.contactPanelBtn.addEventListener("click", () => {
+
+      if(!chatDOM.contactPanel.classList.contains("display")) {
+         chatDOM.generalChat.classList.remove("display");
+         chatDOM.privateChat.classList.remove("display");
+         chatDOM.contactPanel.classList.add("display");
+
+         receiverClass.remove("general-bgd");
+         receiverClass.remove("private-bgd");
+         receiverClass.add("contact-bgd");
+
+         chatDOM.receiver.textContent = "Joueurs Connectés"
+      }
+   });
+}
+
+const displayPrivateChat = () => {
+   
+   chatDOM.generalChat.classList.remove("display");
+   chatDOM.privateChat.classList.add("display");
+   chatDOM.contactPanel.classList.remove("display");
+
+   chatDOM.receiver.classList.remove("general-bgd");
+   chatDOM.receiver.classList.add("private-bgd");
+   chatDOM.receiver.classList.remove("contact-bgd");
+
+   chatDOM.receiver.textContent = `Destinataire: ${selectedPlayer}`;
+}
+
+const connectedPlayerTemplate = (playerName) => {
+
+   const template = `
+      <li class="flexCenter borders blue-bgd  connected-player">
+         <p class="flexCenter">${playerName}</p>
+
+         <figure class="flexCenter">
+            <i class="fas fa-comment"></i>
+            <i class="far fa-comment"></i>
+         </figure>
+      </li>
+   `;
+
+   chatDOM.contactPanel.insertAdjacentHTML("beforeend", template);
+}
+
+const generateConnectedPlayer = (socket) => {
+
+   socket.on("gamesList", (syncPack) => {
+      if(syncPack.playersName) {
+         
+         syncPack.playersName.forEach(name => {
+
+            // Render all none existing players names
+            if(!existingPlayerArray.includes(name)) {
+               existingPlayerArray.push(name);
+               connectedPlayerTemplate(name);
+            }
+         });
+
+         let allNamesTag = document.querySelectorAll(".contact-panel li");
+         
+         // Update all existing tags
+         allNamesTag.forEach(tag => {
+
+            let tagName = tag.querySelector("p");
+            if(!syncPack.playersName.includes(tagName.textContent)) tag.remove();
+         });
+      }
+   });
+
+
+   // Update Connected Players Names
+   socket.on("updateName", (nameObj) => {
+      let allNamesTag = document.querySelectorAll(".contact-panel li");
+      
+      allNamesTag.forEach(tag => {
+         let tagName = tag.querySelector("p");
+         let bubble = tag.querySelector("figure");
+
+         if(existingNamesArray.includes(nameObj.oldName)) removeIndex(existingNamesArray, nameObj.oldName);
+         if(tagName.textContent === nameObj.oldName) tagName.textContent = nameObj.newName;
+
+         if(!clickedTagsArray.includes(tagName.textContent)) {
+            clickedTagsArray.push(tagName.textContent);
+
+            extractPlayerName(bubble, tagName.textContent);
+         }
       });
-   }
+   });
 }
 
+const extractPlayerName = (bubble, tagName) => {
 
-let otherPlayerName;
-
-const extractPlayerName = (messageTagIndexed) => {
-   const prefix = "A >";
-   const offlineStr = "< Est déconnecté !";
-   let messageText = messageTagIndexed.textContent;
-   
-   let receiverName;
-   let splitedName = messageText.split(": ")[0];
-   
-   if(splitedName.includes(prefix)) receiverName = splitedName.split(prefix)[1];
-   else receiverName = splitedName;
-   
-   if(receiverName !== ""
-   && receiverName !== clientPlayer.name
-   && !messageText.includes(offlineStr)) {
-
-      otherPlayerName = receiverName;
-
-      // receiverContent = `A : ${receiverName}`;
-      // chatInput.value = "";
-   }
+   bubble.addEventListener("click", () => {
+      selectedPlayer = tagName;
+      displayPrivateChat();
+      isGeneralChannel = false;
+   });
 }
 
 
@@ -146,4 +243,6 @@ const initChat = (socket) => {
    initSearchBar();
    sendMessage(socket);
    chatAddMessage(socket);
+   toggleChatChannels();
+   generateConnectedPlayer(socket);
 }

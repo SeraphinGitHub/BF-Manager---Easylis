@@ -26,7 +26,13 @@ const chatDOM = {
    editNameAlert: document.querySelector(".player-name .alert-message"),
    searchBar: document.querySelector(".search-bar"),
    searchBarInput: document.querySelector(".search-bar input"),
-   chatList: document.querySelector(".chat-list"),
+   generalChatBtn: document.querySelector(".general-chat-btn"),
+   generalChat: document.querySelector(".general-chat"),
+   privateChatBtn: document.querySelector(".private-chat-btn"),
+   privateChat: document.querySelector(".private-chat"),
+   contactPanelBtn: document.querySelector(".contact-panel-btn"),
+   contactPanel: document.querySelector(".contact-panel"),
+   receiver: document.querySelector(".receiver"),
    chatForm: document.querySelector(".chat-form"),
    chatInput: document.querySelector(".chat-input"),
 }
@@ -87,6 +93,7 @@ const removeIndex = (array, item) => {
    let index = array.indexOf(item);
    array.splice(index, 1);
 }
+
 
 // =====================================================================
 // Init Game Handler

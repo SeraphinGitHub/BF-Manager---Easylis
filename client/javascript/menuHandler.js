@@ -1,7 +1,6 @@
 
 "use strict"
 
-let clickedTagsArray = [];
 let existingGamesArray = [];
 
 // Generate DOM
@@ -73,14 +72,9 @@ const generateGameTags = (socket) => {
 
             // Update tag player counter
             syncPack.gamesArray.forEach(game => gameState(tag, tagName, game));
-            
-            // Enter/Deleted game EventsListeners
-            if(!clickedTagsArray.includes(tagName)) {
-               clickedTagsArray.push(tagName);
                
-               enterGame(socket, tag, tagName);
-               deleteGame(socket, tag, tagName);
-            }
+            enterGame(socket, tag, tagName);
+            deleteGame(socket, tag, tagName);
 
             // Remove deleted Tags on Sync
             if(!gamesNameArray.includes(tagName)) tag.remove();
@@ -194,37 +188,21 @@ const enterGame = (socket, tag, tagName) => {
 
          clientPlayer.gameName = tagName;
          gameName.textContent = tagName;
-         menuDOM.backCover.classList.remove("slide");
-         menuDOM.leftPlayerName.textContent = clientPlayer.name;
-
-         // Back Cover Slide Animation
-         setTimeout(() => {
-            let gameTagBtn = document.querySelectorAll(".game-tag button");
-            gameTagBtn.forEach(btn => btn.classList.remove("visible"));
-            
-            menuDOM.gamesList.classList.remove("visible");
-            menuDOM.backCover.classList.add("slide");
-            menuDOM.game.classList.add("visible");
-         }, menuDOM.CSSduration);
+         
+         hideGamesList();
+         setLeftPlayerDOM();
       });
 
 
       // No space available
-      socket.on("joinGameDenied", (errorMessage) => {
-         popUpAlert(joinBtnAlert, errorMessage);
+      socket.on("joinGameDenied", (joinObj) => {
+         if(tagName === joinObj.gameName) popUpAlert(joinBtnAlert, joinObj.message);
       });
 
 
       // When other Player join Game
       socket.on("otherPlayerJoined", (otherPlayerName) => {
-         
-         menuDOM.rightPlayerName.textContent = otherPlayerName;
-         menuDOM.rightPlayerStatus.textContent = "Statu: Connecté";
-
-         menuDOM.rightPlayerName.classList.remove("orange-bgd");
-         menuDOM.rightPlayerName.classList.add("blue-bgd");
-         menuDOM.rightPlayerStatus.classList.remove("orange-bgd");
-         menuDOM.rightPlayerStatus.classList.add("green-bgd");
+         setRightPlayerDOM(otherPlayerName);
       });
    });
 }
@@ -248,50 +226,138 @@ const deleteGame = (socket, tag, tagName) => {
       const clearArraysDelay = 100;
 
       setTimeout(() => {
-         if(clickedTagsArray.includes(gameName)) removeIndex(clickedTagsArray, gameName);
          if(existingGamesArray.includes(gameName)) removeIndex(existingGamesArray, gameName);         
       }, clearArraysDelay);
    });
 }
 
-const quitGame = (socket) => {
+const leaveGame = (socket) => {
 
-   menuDOM.quitGameBtn.addEventListener("click", () => {
+   menuDOM.leaveGameBtn.addEventListener("click", () => {
       menuDOM.backCover.classList.remove("slide");
 
-      socket.emit("quitGame", ({
+      socket.emit("leaveGame", ({
+         gameName: menuDOM.game.querySelector(".game-name").textContent,
+         playerName: clientPlayer.name,
+         playerID: clientPlayer.id,
+      }));
+   });
+
+   socket.on("leaveGameSuccess", () => {
+      clearLeftPlayerDOM();
+      displayGamesList();
+   });
+
+   socket.on("otherPlayerLeave", () => {
+      clearRightPlayerDOM();
+   });
+}
+
+const killGame = (socket) => {
+
+   menuDOM.killGameBtn.addEventListener("click", () => {
+      menuDOM.backCover.classList.remove("slide");
+
+      socket.emit("killGame", ({
          gameName: menuDOM.game.querySelector(".game-name").textContent,
          otherPlayerName: menuDOM.rightPlayerName.textContent,
       }));
    });
 
-   socket.on("quitGameSuccess", () => {
-      setTimeout(() => {
-         
-         let allGamesTags = document.querySelectorAll(".games-list li");
-
-         // Display delete button
-         allGamesTags.forEach(tag => {
-            const deleteBtn = tag.querySelector(".delete-game-btn");
-            if(Number(tag.id) === clientPlayer.id) deleteBtn.classList.add("visible");
-         });
-
-         // Remove Pack
-         menuDOM.game.classList.remove("visible");
-         menuDOM.rightPlayerName.classList.remove("blue-bgd");
-         menuDOM.rightPlayerStatus.classList.remove("green-bgd");
-         
-         // Add Pack
-         menuDOM.gamesList.classList.add("visible");
-         menuDOM.backCover.classList.add("slide");
-         menuDOM.rightPlayerName.classList.add("orange-bgd");
-         menuDOM.rightPlayerStatus.classList.add("orange-bgd");
-
-         menuDOM.rightPlayerName.textContent = "Vide";
-         menuDOM.rightPlayerStatus.textContent = "Statu: En attente";
-
-      }, menuDOM.CSSduration);
+   socket.on("killGameSuccess", () => {
+      clearRightPlayerDOM();
+      displayGamesList();
    });
+}
+
+
+const hideGamesList = () => {
+
+   menuDOM.backCover.classList.remove("slide");
+
+   // Back Cover Slide Animation
+   setTimeout(() => {
+      let gameTagBtn = document.querySelectorAll(".game-tag button");
+      gameTagBtn.forEach(btn => btn.classList.remove("visible"));
+      
+      menuDOM.gamesList.classList.remove("visible");
+      menuDOM.backCover.classList.add("slide");
+      menuDOM.game.classList.add("visible");
+
+   }, menuDOM.CSSduration);
+}
+
+const displayGamesList = () => {
+
+   setTimeout(() => {
+      let allGamesTags = document.querySelectorAll(".games-list li");
+
+      // Display delete button
+      allGamesTags.forEach(tag => {
+         const deleteBtn = tag.querySelector(".delete-game-btn");
+         if(Number(tag.id) === clientPlayer.id) deleteBtn.classList.add("visible");
+      });
+
+      // Remove Pack
+      menuDOM.game.classList.remove("visible");
+      
+      // Add Pack
+      menuDOM.gamesList.classList.add("visible");
+      menuDOM.backCover.classList.add("slide");
+
+   }, menuDOM.CSSduration);
+}
+
+const setLeftPlayerDOM = () => {
+
+   menuDOM.leftPlayerName.textContent = clientPlayer.name;
+   menuDOM.leftPlayerStatus.textContent = "Statut: Connecté";
+
+   menuDOM.leftPlayerName.classList.remove("orange-bgd");
+   menuDOM.leftPlayerStatus.classList.remove("orange-bgd");
+
+   menuDOM.leftPlayerName.classList.add("blue-bgd");
+   menuDOM.leftPlayerStatus.classList.add("green-bgd");
+}
+
+const clearLeftPlayerDOM = () => {
+
+   // Remove Pack
+   menuDOM.leftPlayerName.classList.remove("blue-bgd");
+   menuDOM.leftPlayerStatus.classList.remove("green-bgd");
+   
+   // Add Pack
+   menuDOM.leftPlayerName.classList.add("orange-bgd");
+   menuDOM.leftPlayerStatus.classList.add("orange-bgd");
+
+   menuDOM.leftPlayerName.textContent = "Vide";
+   menuDOM.leftPlayerStatus.textContent = "Statu: En attente";
+}
+
+const setRightPlayerDOM = (playerName) => {
+
+   menuDOM.rightPlayerName.textContent = playerName;
+   menuDOM.rightPlayerStatus.textContent = "Statut: Connecté";
+
+   menuDOM.rightPlayerName.classList.remove("orange-bgd");
+   menuDOM.rightPlayerStatus.classList.remove("orange-bgd");
+
+   menuDOM.rightPlayerName.classList.add("blue-bgd");
+   menuDOM.rightPlayerStatus.classList.add("green-bgd");
+}
+
+const clearRightPlayerDOM = () => {
+
+   // Remove Pack
+   menuDOM.rightPlayerName.classList.remove("blue-bgd");
+   menuDOM.rightPlayerStatus.classList.remove("green-bgd");
+   
+   // Add Pack
+   menuDOM.rightPlayerName.classList.add("orange-bgd");
+   menuDOM.rightPlayerStatus.classList.add("orange-bgd");
+
+   menuDOM.rightPlayerName.textContent = "Vide";
+   menuDOM.rightPlayerStatus.textContent = "Statu: En attente";
 }
 
 const adminMode = (socket) => {
@@ -315,6 +381,7 @@ const initMenu = (socket) => {
 
    createGame(socket);
    generateGameTags(socket);
-   quitGame(socket);
+   leaveGame(socket);
+   killGame(socket);
    adminMode(socket);
 }

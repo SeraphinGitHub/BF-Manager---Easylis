@@ -13,9 +13,11 @@ const menuDOM = {
    gamesList: document.querySelector(".games-list"),
    game: document.querySelector(".game"),
    leftPlayerName: document.querySelector(".left-player-name"),
+   leftPlayerStatus: document.querySelector(".left-player-status"),
    rightPlayerName: document.querySelector(".right-player-name"),
    rightPlayerStatus: document.querySelector(".right-player-status"),
-   quitGameBtn: document.querySelector(".quit-game-btn"),
+   leaveGameBtn: document.querySelector(".leave-game-btn"),
+   killGameBtn: document.querySelector(".kill-game-btn"),
    CSSduration: 1000, // Milliseconds
 }
 

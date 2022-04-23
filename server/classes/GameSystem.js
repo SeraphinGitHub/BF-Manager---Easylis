@@ -22,16 +22,21 @@ class GameSystem extends DataBase {
       player.name = `Joueur ${socket.id}`;
 
       const sql = `INSERT INTO players (
+         id,
          name,
          created_at,
          updated_at)
          
          VALUES (
+         '${socket.id}',
          '${player.name}',
          CURRENT_TIMESTAMP,
          CURRENT_TIMESTAMP)
          
-         ON CONFLICT (name) DO NOTHING
+         ON CONFLICT (id) DO UPDATE SET
+         name = EXCLUDED.name,
+         created_at = EXCLUDED.created_at,
+         updated_at = EXCLUDED.updated_at
       `;
       
       this.runQuery(sql)
@@ -163,7 +168,11 @@ class GameSystem extends DataBase {
             // If Game is full || ended
             else if(gameStatus) {
                const errorMessage = "Partie déjà complète";
-               socket.emit("joinGameDenied", (errorMessage));
+
+               socket.emit("joinGameDenied", ({
+                  message: errorMessage,
+                  gameName: enterObj.gameName,
+               }));
             }
 
          }).catch((err) => console.log(err));
@@ -181,30 +190,65 @@ class GameSystem extends DataBase {
       // Add Joining PlayerID to connectedPlayers Array
       this.runQuery(sql)
       .then(() => {
+
          const socket = this.socketList[playerID];
          socket.emit("joinGameSuccess");
          this.serverSync();
-      
+
       }).catch((err) => console.log(err));
    }
+   
+   leaveGame(leaveObj, socket) {
 
-   quitGame(quitObj, socket) {
+      if(leaveObj.gameName && this.regEx.normalText.test(leaveObj.gameName)
+      && leaveObj.playerName && this.regEx.normalText.test(leaveObj.playerName)
+      && leaveObj.playerID && typeof(leaveObj.playerID) === "number") {
+   
+         let sql = `
+            UPDATE games SET
+            connected_players = ARRAY_REMOVE(connected_players, ${leaveObj.playerID})
+            WHERE name = '${leaveObj.gameName}'
+         `;
+
+         // Remove leaving player index
+         this.runQuery(sql)
+         .then(() => {
+
+            sql = `SELECT connected_players FROM games WHERE name = '${leaveObj.gameName}'`;
+            
+            // Get connected_players Array
+            this.runQuery(sql)
+            .then((res) => {
+
+               const otherPlayerID = res[0].connected_players[0];
+               const otherSocket = this.socketList[otherPlayerID];
+
+               socket.emit("leaveGameSuccess");
+               otherSocket.emit("otherPlayerLeave");
+               this.serverSync();
+
+            }).catch((err) => console.log(err));
+         }).catch((err) => console.log(err));
+      }
+   }
+
+   killGame(killObj, socket) {
       
-      if(quitObj.gameName && this.regEx.normalText.test(quitObj.gameName)
-      && quitObj.otherPlayerName && this.regEx.normalText.test(quitObj.otherPlayerName)) {
+      if(killObj.gameName && this.regEx.normalText.test(killObj.gameName)
+      && killObj.otherPlayerName && this.regEx.normalText.test(killObj.otherPlayerName)) {
 
          let sql = `
             UPDATE games SET status = false,
             connected_players = '{}',
             updated_at = CURRENT_TIMESTAMP
-            WHERE name = '${quitObj.gameName}'
+            WHERE name = '${killObj.gameName}'
          `;
 
          // Update Game Status
          this.runQuery(sql)
          .then(() => {
 
-            sql = `SELECT id FROM players WHERE name = '${quitObj.otherPlayerName}'`;
+            sql = `SELECT id FROM players WHERE name = '${killObj.otherPlayerName}'`;
             
             // Get other PlayerID
             this.runQuery(sql)
@@ -213,14 +257,14 @@ class GameSystem extends DataBase {
                const otherPlayerID = res[0].id;
                const otherSocket = this.socketList[otherPlayerID];
 
-               socket.emit("quitGameSuccess");
-               otherSocket.emit("quitGameSuccess");
+               socket.emit("killGameSuccess");
+               otherSocket.emit("killGameSuccess");
                this.serverSync();
                
             }).catch((err) => {
                
                if(err) {
-                  socket.emit("quitGameSuccess");
+                  socket.emit("killGameSuccess");
                   this.serverSync();
                }
             });
@@ -251,7 +295,7 @@ class GameSystem extends DataBase {
                for(let i in this.playerList) {
                   let player = this.playerList[i];
                   if(player.name === nameObj.oldName) player.name = nameObj.newName;
-               }  
+               }
 
                socket.emit("changeNameSuccess");
 
@@ -288,22 +332,27 @@ class GameSystem extends DataBase {
       && messageObj.otherPlayerName && this.regEx.normalText.test(messageObj.otherPlayerName)
       && messageObj.message && this.regEx.specialText.test(messageObj.message)) {
 
-         let sql = `SELECT id FROM players WHERE name = '${messageObj.otherPlayerName}'`;
+         if(messageObj.playerName !== messageObj.otherPlayerName) {
 
-         this.runQuery(sql)
-         .then((res) => {
-
-            const prefix = "A > ";
-            const otherPlayerID = res[0].id;
-            let otherSocket = this.socketList[otherPlayerID];
-            
-            if(otherSocket) {
-               otherSocket.emit("addMessageToPrivate", `${messageObj.playerName}: ${messageObj.message}`);
-               socket.emit("addMessageToPrivate", `${prefix}${messageObj.otherPlayerName}: ${messageObj.message}`);
-            }
-            else socket.emit("addMessageToPrivate", `>${messageObj.otherPlayerName}< Est déconnecté !`);
-
-         }).catch((err) => console.log(err));
+            let sql = `SELECT id FROM players WHERE name = '${messageObj.otherPlayerName}'`;
+   
+            this.runQuery(sql)
+            .then((res) => {
+   
+               const prefix = "A > ";
+               const otherPlayerID = res[0].id;
+               let otherSocket = this.socketList[otherPlayerID];
+               
+               if(otherSocket) {
+                  otherSocket.emit("addMessageToPrivate", `${messageObj.playerName}: ${messageObj.message}`);
+                  socket.emit("addMessageToPrivate", `${prefix}${messageObj.otherPlayerName}: ${messageObj.message}`);
+               }
+               else socket.emit("addMessageToPrivate", `>${messageObj.otherPlayerName}< Est déconnecté !`);
+   
+            }).catch(() => {
+               socket.emit("addMessageToPrivate", `>${messageObj.otherPlayerName}< Est déconnecté !`);
+            });
+         }
       }
    }
 

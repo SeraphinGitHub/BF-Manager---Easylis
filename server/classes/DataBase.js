@@ -29,7 +29,7 @@ class DataBase {
 
    initPlayers() {
       const sql = `CREATE TABLE if NOT EXISTS players (
-         id SERIAL PRIMARY KEY UNIQUE NOT NULL,
+         id INT PRIMARY KEY UNIQUE NOT NULL,
          name VARCHAR(30) UNIQUE NOT NULL,
          created_At TIMESTAMP NOT NULL,
          updated_At TIMESTAMP NOT NULL
@@ -44,7 +44,7 @@ class DataBase {
          name VARCHAR(30) UNIQUE NOT NULL,
          player_ID INT NOT NULL,
          status BOOLEAN DEFAULT true NOT NULL,
-         connected_Players TEXT [],
+         connected_Players INT [],
          created_At TIMESTAMP NOT NULL,
          updated_At TIMESTAMP NOT NULL
       )`;

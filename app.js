@@ -65,7 +65,8 @@ const onConnect = (socket) => {
    socket.on("createGame", (gameName) => gameSystem.createNewGame(socket, gameName));
    socket.on("deleteGame", (deleteObj) => gameSystem.deleteGame(socket, deleteObj));
    socket.on("enterGame", (enterObj) => gameSystem.enterGame(enterObj));
-   socket.on("quitGame", (quitObj) => gameSystem.quitGame(quitObj, socket));
+   socket.on("leaveGame", (leaveObj) => gameSystem.leaveGame(leaveObj, socket));
+   socket.on("killGame", (killObj) => gameSystem.killGame(killObj, socket));
    
 
    // ========== Change Player Name ==========

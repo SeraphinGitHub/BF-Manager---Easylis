@@ -210,18 +210,23 @@
 .game-title {
    justify-content: space-between;
    height: auto;
-   width: 80%;
+   width: 90%;
 }
 
 .game-name {
    height: 45px;
-   width: 55%;
+   width: 50%;
    font-size: 20px;
 }
 
-.quit-game-btn {
+.leave-game-btn {
+   text-shadow: black 0px 0px 7px;
+}
+
+.leave-game-btn,
+.kill-game-btn {
    height: 50px;
-   width: 30%;
+   width: 22%;
    font-size: 20px;
 }
 

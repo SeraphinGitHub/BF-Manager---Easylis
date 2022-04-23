@@ -97,7 +97,17 @@ const chatAddMessage = (socket) => {
    });
 
    socket.on("addMessageToPrivate", (message) => {
+
+      const receivedDelay = 800; // Milliseconds
       chatDOM.privateChat.innerHTML += `<li class="flexCenter message">${message}</li>`;
+
+      if(isGeneralChannel) {
+         chatDOM.privateChatBtn.classList.add("received-bgd");
+   
+         setTimeout(() => {
+            chatDOM.privateChatBtn.classList.remove("received-bgd");
+         }, receivedDelay);
+      }
    });
 }
 
@@ -180,6 +190,7 @@ const connectedPlayerTemplate = (playerName) => {
 
 const generateConnectedPlayer = (socket) => {
 
+   // Render players names
    socket.on("gamesList", (syncPack) => {
       if(syncPack.playersName) {
          
@@ -198,6 +209,7 @@ const generateConnectedPlayer = (socket) => {
          allNamesTag.forEach(tag => {
 
             let tagName = tag.querySelector("p");
+            syncPack.playersName.forEach(name => extractPlayerName(tag, name));
             if(!syncPack.playersName.includes(tagName.textContent)) tag.remove();
          });
       }
@@ -206,30 +218,29 @@ const generateConnectedPlayer = (socket) => {
 
    // Update Connected Players Names
    socket.on("updateName", (nameObj) => {
+
       let allNamesTag = document.querySelectorAll(".contact-panel li");
       
       allNamesTag.forEach(tag => {
+         
          let tagName = tag.querySelector("p");
-         let bubble = tag.querySelector("figure");
-
-         if(existingNamesArray.includes(nameObj.oldName)) removeIndex(existingNamesArray, nameObj.oldName);
          if(tagName.textContent === nameObj.oldName) tagName.textContent = nameObj.newName;
-
-         if(!clickedTagsArray.includes(tagName.textContent)) {
-            clickedTagsArray.push(tagName.textContent);
-
-            extractPlayerName(bubble, tagName.textContent);
-         }
+         extractPlayerName(tag, tagName.textContent);
       });
    });
 }
 
-const extractPlayerName = (bubble, tagName) => {
+const extractPlayerName = (tag, tagName) => {
+
+   let bubble = tag.querySelector("figure");
 
    bubble.addEventListener("click", () => {
-      selectedPlayer = tagName;
-      displayPrivateChat();
-      isGeneralChannel = false;
+      if(tagName !== clientPlayer.name) {
+
+         selectedPlayer = tagName;
+         displayPrivateChat();
+         isGeneralChannel = false;
+      }
    });
 }
 

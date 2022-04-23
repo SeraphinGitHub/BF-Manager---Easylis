@@ -42,7 +42,8 @@ button {
 .create-game button:hover,
 .games-list li:hover,
 .player-name button:hover,
-.quit-game-btn:hover {
+.leave-game-btn:hover,
+.kill-game-btn:hover {
    box-shadow: grey 5px 5px 5px;
 }
 
@@ -53,7 +54,8 @@ button {
 .create-game button:active,
 .games-list li:active,
 .player-name button:active,
-.quit-game-btn:active {
+.leave-game-btn:active,
+.kill-game-btn:active {
    box-shadow: rgb(75, 75, 75) 5px 5px 5px;
 }
 
@@ -140,12 +142,16 @@ button {
 
 
 /* ====== Game ====== */
-.quit-game-btn {
+.kill-game-btn {
    color: black;
 }
 
 /* :Active */
-.quit-game-btn:active {
+.leave-game-btn:active {
+   background: linear-gradient(to bottom right, rgb(138, 202, 223), rgb(0, 121, 241), rgb(119, 0, 170));
+}
+
+.kill-game-btn:active {
    background: linear-gradient(to bottom right, rgb(255, 104, 129), rgb(190, 0, 0));
 }
 
@@ -248,8 +254,19 @@ button {
 }
 
 .received-bgd {
-   border-color: red;
-   background-color: red;
+   animation: fadeOut 0.8s linear;
+}
+
+@keyframes fadeOut {
+   0% {
+      border-color: red;
+      background-color: red;
+   }
+   
+   100% {
+      border-color: rgb(0, 110, 221);
+      background-color: rgb(0, 110, 221);
+   }
 }
 
 .private-chat {

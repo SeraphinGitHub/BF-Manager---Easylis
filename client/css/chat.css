@@ -156,6 +156,7 @@
 
 /* ====== Chat InputField ====== */
 .chat-form {
+   visibility: hidden;
    position: relative;
    width: 91%;
 }
@@ -176,42 +177,82 @@
    padding-left: 30px;
 }
 
-.connected-player figure {
+.bubble {
+   visibility: hidden;
    position: relative;
    width: 40px;
    height: 100%;
-   margin-right: 100px;
+   margin-right: 50px;
 }
 
-.connected-player figure i {
+.bubble i {
    position: absolute;
    height: 100%;
    width: 100%;
    top: 5px;
 }
 
-.connected-player .fas {
+.bubble .fas {
    color: white;
    font-size: 170%;
 }
 
-.connected-player .far {
+.bubble .far {
    color: black;
    font-size: 180%;
 }
 
 /* ====== :Hover ====== */
-.connected-player figure:hover .fas {
+.bubble:hover .fas {
    color: red;
 }
 
 
 /* ====== :Active ====== */
-.connected-player figure:active .fas {
+.bubble:active .fas {
    color: violet;
 }
 
-.connected-player figure:hover {
+.bubble:hover {
    font-size: 120%;
    cursor: pointer;
+}
+
+
+/* ====== Admin Icons ====== */
+.delete-player {
+   visibility: hidden;
+   position: relative;
+   height: 35px;
+   width: 35px;
+   margin-right: 50px;
+}
+
+.delete-player span,
+.delete-player i {
+   position: absolute;
+}
+
+.delete-player span {
+   height: 70%;
+   width: 70%;
+   background-color: white;
+}
+
+.delete-player i {
+   font-size: 200%;
+   color: red;
+}
+
+/* ====== :Hover ====== */
+.delete-player:hover {
+   transform: scale(120%);
+   cursor: pointer;
+}
+
+/* ====== :Active ====== */
+.delete-player:active i {
+   font-size: 180%;
+   color: rgb(155, 0, 0);
+   transition-duration: 0s;
 }

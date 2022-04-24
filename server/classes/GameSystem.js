@@ -224,7 +224,7 @@ class GameSystem extends DataBase {
                const otherSocket = this.socketList[otherPlayerID];
 
                socket.emit("leaveGameSuccess");
-               otherSocket.emit("otherPlayerLeave");
+               if(otherSocket) otherSocket.emit("otherPlayerLeave");
                this.serverSync();
 
             }).catch((err) => console.log(err));
@@ -287,6 +287,7 @@ class GameSystem extends DataBase {
 
          const errorMessage = "Ce nom est déjà pris !";
 
+         // If Normal Player Name
          if(nameObj.newName !== process.env.ADMIN_PLAYER_NAME) {
 
             this.runQuery(sql)
@@ -307,10 +308,37 @@ class GameSystem extends DataBase {
             }).catch(() => socket.emit("changeNameDenied", (errorMessage)))
          }
 
+         // If Admin Player Name
          else {
-            socket.emit("changeNameSuccess");
-            socket.emit("adminName");
+            let sql = `SELECT name FROM players`;
+
+            this.runQuery(sql)
+            .then((res) => {
+
+               const playersNameArray = [];
+
+               res.forEach(pair => playersNameArray.push(pair.name));
+
+               socket.emit("changeNameSuccess");
+               socket.emit("adminModeSuccess", (playersNameArray));
+
+            }).catch((err) => console.log(err));
          }
+      }
+   }
+
+   deletePlayer(socket, playerName) {
+
+      if(playerName && this.regEx.normalText.test(playerName)) {
+         
+         const sql = `
+            DELETE FROM players WHERE
+            name = '${playerName}'
+         `;
+   
+         this.runQuery(sql)
+         .then(() => socket.emit("deletePlayerSuccess"))
+         .catch((err) => console.log(err));
       }
    }
 
@@ -358,20 +386,12 @@ class GameSystem extends DataBase {
 
    dateFormat(dateDB) {
    
-      const timeZone = 2;
-      const date = new Date(dateDB);
-      const dateArray = date.toISOString().split("T")[0].split("-");
-      const timeArray = date.toISOString().split("T")[1].split(":");
-   
-      const dateObj = {
-         day: dateArray[2],
-         month: dateArray[1],
-         year: dateArray[0],
-         hour: Number(timeArray[0]) +timeZone,
-         min: timeArray[1],
-      }
+      const fullDateString = dateDB.toLocaleString("fr-FR", { timeZone: "Europe/Paris" });
 
-      return `${dateObj.day}/${dateObj.month}/${dateObj.year} à ${dateObj.hour}h${dateObj.min}`;
+      const dateString = fullDateString.split(", ")[0];
+      const timeString = fullDateString.split(", ")[1];
+
+      return `${dateString} à ${timeString}`;
    }
    
    // Server Sync

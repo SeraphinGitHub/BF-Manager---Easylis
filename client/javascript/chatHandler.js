@@ -118,6 +118,8 @@ const toggleChatChannels = () => {
    // Toggle General Chat
    chatDOM.generalChatBtn.addEventListener("click", () => {
 
+      if(!chatDOM.chatForm.classList.contains("visible")) chatDOM.chatForm.classList.add("visible");
+
       if(!chatDOM.generalChat.classList.contains("display")) {
          chatDOM.generalChat.classList.add("display");
          chatDOM.privateChat.classList.remove("display");
@@ -129,6 +131,7 @@ const toggleChatChannels = () => {
 
          chatDOM.receiver.textContent = "Destinataire: Tout le monde";
       }
+      
 
       isGeneralChannel = true;
    });
@@ -137,7 +140,9 @@ const toggleChatChannels = () => {
    // Toggle Private Chat
    chatDOM.privateChatBtn.addEventListener("click", () => {
 
+      if(!chatDOM.chatForm.classList.contains("visible")) chatDOM.chatForm.classList.add("visible");
       if(!chatDOM.privateChat.classList.contains("display")) displayPrivateChat();
+      
       isGeneralChannel = false;
    });
 
@@ -146,6 +151,8 @@ const toggleChatChannels = () => {
    chatDOM.contactPanelBtn.addEventListener("click", () => {
 
       if(!chatDOM.contactPanel.classList.contains("display")) {
+
+         chatDOM.chatForm.classList.remove("visible");
          chatDOM.generalChat.classList.remove("display");
          chatDOM.privateChat.classList.remove("display");
          chatDOM.contactPanel.classList.add("display");
@@ -172,15 +179,30 @@ const displayPrivateChat = () => {
    chatDOM.receiver.textContent = `Destinataire: ${selectedPlayer}`;
 }
 
-const connectedPlayerTemplate = (playerName) => {
+const connectedPlayerTemplate = (playerName, isAdmin) => {
+
+   let colorBgd = "blue-bgd";
+   let bubbleBtn = "visible";
+   let deleteBtn = "";
+   
+   if(isAdmin) {
+      colorBgd = "orange-bgd";
+      bubbleBtn = "";
+      deleteBtn = "visible";
+   }
 
    const template = `
-      <li class="flexCenter borders blue-bgd  connected-player">
+      <li class="flexCenter borders ${colorBgd}  connected-player">
          <p class="flexCenter">${playerName}</p>
 
-         <figure class="flexCenter">
+         <figure class="flexCenter bubble ${bubbleBtn}">
             <i class="fas fa-comment"></i>
             <i class="far fa-comment"></i>
+         </figure>
+
+         <figure class="flexCenter delete-player ${deleteBtn}">
+            <span></span>
+            <i class="fas fa-window-close"></i>
          </figure>
       </li>
    `;
@@ -189,6 +211,7 @@ const connectedPlayerTemplate = (playerName) => {
 }
 
 const generateConnectedPlayer = (socket) => {
+   const isAdmin = false;
 
    // Render players names
    socket.on("gamesList", (syncPack) => {
@@ -199,7 +222,7 @@ const generateConnectedPlayer = (socket) => {
             // Render all none existing players names
             if(!existingPlayerArray.includes(name)) {
                existingPlayerArray.push(name);
-               connectedPlayerTemplate(name);
+               connectedPlayerTemplate(name, isAdmin);
             }
          });
 
@@ -207,10 +230,10 @@ const generateConnectedPlayer = (socket) => {
          
          // Update all existing tags
          allNamesTag.forEach(tag => {
-
-            let tagName = tag.querySelector("p");
             syncPack.playersName.forEach(name => extractPlayerName(tag, name));
-            if(!syncPack.playersName.includes(tagName.textContent)) tag.remove();
+
+            let tagName = tag.querySelector("p").textContent;
+            if(!syncPack.playersName.includes(tagName)) tag.remove();
          });
       }
    });
@@ -223,9 +246,16 @@ const generateConnectedPlayer = (socket) => {
       
       allNamesTag.forEach(tag => {
          
-         let tagName = tag.querySelector("p");
-         if(tagName.textContent === nameObj.oldName) tagName.textContent = nameObj.newName;
-         extractPlayerName(tag, tagName.textContent);
+         let tag_p = tag.querySelector("p");
+         let tagName = tag_p.textContent;
+
+         if(tagName === nameObj.oldName) {
+            removeIndex(existingPlayerArray, nameObj.oldName);
+            existingPlayerArray.push(nameObj.newName);
+            tag_p.textContent = nameObj.newName;
+         }
+         
+         extractPlayerName(tag, tagName);
       });
    });
 }

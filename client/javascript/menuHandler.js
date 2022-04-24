@@ -271,6 +271,7 @@ const killGame = (socket) => {
 }
 
 
+// Modify DOM
 const hideGamesList = () => {
 
    menuDOM.backCover.classList.remove("slide");
@@ -331,7 +332,7 @@ const clearLeftPlayerDOM = () => {
    menuDOM.leftPlayerStatus.classList.add("orange-bgd");
 
    menuDOM.leftPlayerName.textContent = "Vide";
-   menuDOM.leftPlayerStatus.textContent = "Statu: En attente";
+   menuDOM.leftPlayerStatus.textContent = "Statut: En attente";
 }
 
 const setRightPlayerDOM = (playerName) => {
@@ -357,20 +358,7 @@ const clearRightPlayerDOM = () => {
    menuDOM.rightPlayerStatus.classList.add("orange-bgd");
 
    menuDOM.rightPlayerName.textContent = "Vide";
-   menuDOM.rightPlayerStatus.textContent = "Statu: En attente";
-}
-
-const adminMode = (socket) => {
-
-   socket.on("adminName", () => {
-      let allGamesTags = document.querySelectorAll(".games-list li");
-
-      // Display delete button
-      allGamesTags.forEach(tag => {
-         const deleteBtn = tag.querySelector(".delete-game-btn");
-         deleteBtn.classList.add("visible");
-      });
-   });
+   menuDOM.rightPlayerStatus.textContent = "Statut: En attente";
 }
 
 
@@ -383,5 +371,4 @@ const initMenu = (socket) => {
    generateGameTags(socket);
    leaveGame(socket);
    killGame(socket);
-   adminMode(socket);
 }

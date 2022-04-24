@@ -59,7 +59,7 @@ const onConnect = (socket) => {
    
    // ========== Init Player ==========
    gameSystem.createNewPlayer(socket);
-   gameSystem.serverSync();
+   
    
    // ========== Game States ==========
    socket.on("createGame", (gameName) => gameSystem.createNewGame(socket, gameName));
@@ -71,6 +71,7 @@ const onConnect = (socket) => {
 
    // ========== Change Player Name ==========
    socket.on("changeName", (nameObj) => gameSystem.changeName(socket, nameObj));
+   socket.on("adminDeletePlayer", (playerName) => gameSystem.deletePlayer(socket, playerName));
 
 
    // ========== Chat Message ==========

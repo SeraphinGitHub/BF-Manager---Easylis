@@ -96,6 +96,60 @@ const removeIndex = (array, item) => {
    array.splice(index, 1);
 }
 
+const adminMode = (socket) => {
+
+   let deletedPlayersArray = [];
+
+   // Modify DOM ==> Display as Admin
+   socket.on("adminModeSuccess", (playersNameArray) => {
+
+      const isAdmin = true;
+      
+      // Display Games delete button
+      let allGamesTags = document.querySelectorAll(".games-list li");
+      
+      allGamesTags.forEach(tag => {
+         const deleteBtn = tag.querySelector(".delete-game-btn");
+         deleteBtn.classList.add("visible");
+      });
+
+
+      // Render all players in DataBase
+      playersNameArray.forEach(playerName => connectedPlayerTemplate(playerName, isAdmin));
+
+      
+      // Display Players delete button
+      let allNamesTag = document.querySelectorAll(".contact-panel li");
+
+      allNamesTag.forEach(tag => {
+         
+         if(tag.classList.contains("orange-bgd")) {
+
+            let deleteBtn = tag.querySelector(".delete-player");
+            let playerName = tag.querySelector("p").textContent;
+
+            deleteBtn.addEventListener("click", () => {
+               socket.emit("adminDeletePlayer", (playerName));
+               if(!deletedPlayersArray.includes(playerName)) deletedPlayersArray.push(playerName);
+            });
+         }
+      });
+   });
+
+   // Remove deleted players nameTag
+   socket.on("deletePlayerSuccess", () => {
+      let allNamesTag = document.querySelectorAll(".contact-panel li");
+
+      allNamesTag.forEach(tag => {
+         let playerName = tag.querySelector("p").textContent;
+
+         deletedPlayersArray.forEach(name => {
+            if(name === playerName) tag.remove();
+         });
+      });
+   });
+}
+
 
 // =====================================================================
 // Init Game Handler
@@ -107,4 +161,5 @@ window.addEventListener("load", () => {
    initPlayer(socket);
    initMenu(socket);
    initChat(socket);
+   adminMode(socket);
 });

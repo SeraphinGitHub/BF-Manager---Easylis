@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <!-- ==== Prevent Favicon Error ==== -->
+      <link rel="icon" href="data:;base64,=">
+      
+      <link rel="stylesheet" type="text/css" href="http://localhost:3000/client/css/all.min.css">
+      <link rel="stylesheet" type="text/css" href="http://localhost:3000/client/css/colors.css">
+      <link rel="stylesheet" type="text/css" href="http://localhost:3000/client/css/styles.css">
+      <link rel="stylesheet" type="text/css" href="http://localhost:3000/client/css/menu.css">
+      <link rel="stylesheet" type="text/css" href="http://localhost:3000/client/css/chat.css">
+
+      <title>BF Manager</title>
+   </head>
+
+   <body class="flexCenter">
+      
+      <!-- Game Section -->
+      <section class="flexCenter menu">
+
+         <!-- New Game Container -->
+         <form class="flexCenter create-game">
+            <input class="borders" type="text" placeholder="Nouvelle partie..." autofocus>
+            <p class="flexCenter alert-message"></p>
+            
+            <button class="flexCenter blue-bgd borders">
+               <p>Ajouter</p>
+               <i class="fas fa-plus-circle"></i>
+            </button>
+         </form>
+
+         <!-- Current Games Container -->
+         <div class="flexCenter borders games-container">
+            
+            <!-- Header -->
+            <div class="flexCenter games-header">
+               <p class="blue-bgd borders">Les parties</p>
+               <p class="blue-bgd borders games-count">0</p>
+            </div>
+            
+            <!-- Swap Pages -->
+            <div class="flexCenter games-swap-pages">
+               <div class="flexCenter back-cover slide"></div>
+
+               <!-- Games Lists -->
+               <ul class="flexCenter visible games-list">
+                  <!-- <li></li> -->
+               </ul>
+   
+               <!-- Game -->
+               <div class="flexCenter game">
+                  <div class="flexCenter game-title">
+                     <p class="flexCenter borders orange-bgd game-name"></p>
+                     <button class="flexCenter borders leave-game-btn blue-bgd">Quitter la partie</button>
+                     <button class="flexCenter borders kill-game-btn red-bgd">Terminer la partie</button>
+                  </div>
+   
+                  <figure>
+                     <img src="client/images/soccer-field.jpg" alt="soccer field">
+                  </figure>
+
+                  <div class="flexCenter game-players">
+                     <p class="flexCenter borders blue-bgd player-plate left-player-name"></p>
+                     <p class="flexCenter borders orange-bgd player-plate right-player-name">Vide</p>
+                     <p class="flexCenter borders violet-bgd versus"> -> Affronte <- </p>
+                     <p class="flexCenter borders green-bgd player-plate left-player-status"></p>
+                     <p class="flexCenter borders orange-bgd player-plate right-player-status">Statut: En attente</p>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+      </section>
+      
+
+      <!-- Chat Section -->
+      <section class="flexCenter chat">
+         <div class="flexCenter borders chat-container">
+
+            <!-- Header -->
+            <div class="flexCenter chat-header">
+               <p class="blue-bgd borders">Chat</p>
+               
+               <div class="flexCenter player-name">
+                  <input class="flexCenter borders" type="text">
+                  <p class="flexCenter borders name-field display"></p>
+                  <p class="flexCenter alert-message"></p>
+                  <button class="flexCenter violet-bgd borders">Modifier votre Nom</button>
+               </div>
+
+               <figure class="flexCenter borders profile-photo">
+                  <img src="client/images/profile.jpg" alt="profile photo">
+               </figure>
+            </div>
+
+            <!-- Search Bar -->
+            <form class="flexCenter borders search-bar">
+               <input type="text" placeholder="Nickname...">
+
+               <button class="flexCenter magnifier-btn" type="submit">
+                  <i class="fas fa-search"></i>
+               </button>
+            </form>
+
+            <div class="flexCenter chat-channels">
+               <button class="flexCenter general-chat-btn general-bgd">Général</button>
+               <button class="flexCenter private-chat-btn private-bgd">Privé</button>
+               <button class="flexCenter contact-panel-btn contact-bgd">Social</button>
+            </div>
+
+            <!-- General Chat -->
+            <ul class="flexCenter chat-list general-chat display">
+               <!-- <li></li> -->
+            </ul>
+            
+            <!-- Private Chat -->
+            <ul class="flexCenter chat-list private-chat">
+               <!-- <li></li> -->
+            </ul>
+            
+            <!-- Contact Panel -->
+            <ul class="flexCenter chat-list contact-panel">
+               <!-- <li></li> -->
+            </ul>
+
+            <p class="flexCenter borders receiver general-bgd">Destinataire: Tout le monde</p>
+
+            <!-- Chat InputField -->
+            <form class="flexCenter chat-form visible">
+               <input class="flexCenter borders chat-input" type="text" placeholder="Écrivez quelque chose">
+            </form>
+         </div>
+      </section>
+
+   </body>
+
+   <script src="/socket.io/socket.io.js"></script>
+   <script src="http://localhost:3000/client/javascript/classes/ClientPlayer.js"></script>
+   <script src="http://localhost:3000/client/javascript/_GeneralHandler.js"></script>
+   <script src="http://localhost:3000/client/javascript/menuHandler.js"></script>
+   <script src="http://localhost:3000/client/javascript/chatHandler.js"></script>
+</html>

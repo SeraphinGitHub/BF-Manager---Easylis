@@ -1,0 +1,270 @@
+
+.menu {
+   align-content: flex-start;
+   height: 100%;
+   width: 60%;
+}
+
+
+/* ============================================ */
+/* Create New Game */
+/* ============================================ */
+.create-game {
+   position: relative;
+   justify-content: space-around;
+   padding: 30px;
+}
+
+/* ====== InputField ====== */
+.create-game input {
+   width: 50%;
+}
+
+/* ====== Button ====== */
+.create-game button {
+   width: 20%;
+}
+
+.create-game button p {
+   font-size: 22px;
+   padding-right: 20px;
+   padding-top: 4px;
+}
+
+.create-game button i {
+   font-size: 250%;
+}
+
+/* ====== Alert ====== */
+.create-game .alert-message {
+   left: 34%;
+}
+
+
+/* ============================================ */
+/* Games Container */
+/* ============================================ */
+.games-container {
+   position: relative;
+   align-content: flex-start;
+   height: 740px;
+   width: 95%;
+   margin-top: 20px;
+}
+
+
+/* ====== Header ====== */
+.games-header {
+   justify-content: space-between;
+   margin-top: -20px;
+   margin-right: -30px;
+}
+
+
+/* ====== Swap Pages ====== */
+.games-swap-pages {
+   position: relative;
+   overflow: hidden;
+   height: 685px;
+   margin: 5px;
+}
+
+
+/* ====== Games List ====== */
+.games-list {
+   visibility: hidden;
+   overflow-y: scroll;
+
+   align-content: flex-start;
+   justify-content: flex-start;
+   scrollbar-width: thin;
+   height: 95%;
+   margin: 10px;
+   margin-left: 0;
+   padding-left: 30px;
+}
+
+
+/* ============================================ */
+/* Game Name */
+/* ============================================ */
+.games-list li {
+   cursor: pointer;
+   position: relative;
+   justify-content: flex-start;
+   overflow: hidden;
+   height: 60px;
+   width: 95%;
+   margin-top: 15px;
+   border-radius: 8px;
+}
+
+/* ====== :Hover ====== */
+.games-list li:hover {
+   transform: scale(102%);
+}
+
+/* ====== :Active ====== */
+.games-list li:active {
+   transition-duration: 0s;
+}
+
+.game-tag {
+   align-items: center;
+   justify-content: space-between;
+   height: 90%;
+   padding-left: 40px;
+   padding-right: 40px;
+}
+
+.tag-name {
+   justify-content: flex-start;
+   width: 30%;
+   font-size: 22px;
+   margin-left: 10px;
+}
+
+.tag-player-counter {
+   padding: 5px;
+   width: 5%;
+   font-size: 22px;
+}
+
+.tag-date {
+   position: relative;
+   width: 27%;
+   margin-left: 5px;
+   margin-right: 5px;
+}
+
+.tag-date .alert-message {
+   top: -3px;
+   left: 320px;
+   width: 110%;
+   height: 28px;
+}
+
+.game-tag figure {
+   background-color: white;
+   border-radius: 50%;
+   height: 25px;
+   width: 25px;
+}
+
+.game-tag i {
+   display: none;
+   font-size: 220%;
+}
+
+.enter-game-btn {
+   width: 15%;
+   height: 35px;
+   margin-left: 25px;
+   margin-right: 25px;
+   font-size: 18px;
+   text-shadow: black 0px 0px 7px;
+}
+
+/* ====== :Hover ====== */
+.enter-game-btn:hover {
+   transform: scale(110%);
+}
+
+/* ====== :Active ====== */
+.enter-game-btn:active {
+   transform: scale(100%);
+   transition-duration: 0s;
+}
+
+.delete-game-btn i {
+   font-size: 300%;
+}
+
+.delete-game-btn {
+   visibility: hidden;
+   border: none;
+   background: none;
+}
+
+/* ====== :Hover ====== */
+.delete-game-btn:hover i {
+   font-size: 370%;
+}
+
+
+/* ============================================ */
+/* Game */
+/* ============================================ */
+.game {
+   visibility: hidden;
+   position: absolute;
+   align-content: flex-start;
+   top: 10px;
+   left: 50%;
+   width: 95%;
+   transform: translate(-50%);
+}
+
+
+/* ====== Title Container ====== */
+.game-title {
+   justify-content: space-between;
+   height: auto;
+   width: 90%;
+}
+
+.game-name {
+   height: 45px;
+   width: 50%;
+   font-size: 20px;
+}
+
+.leave-game-btn {
+   text-shadow: black 0px 0px 7px;
+}
+
+.leave-game-btn,
+.kill-game-btn {
+   height: 50px;
+   width: 22%;
+   font-size: 20px;
+}
+
+
+/* ====== Figure ====== */
+.game figure {
+   margin: 17px;
+   height: 480px;
+   box-shadow: black 0px 0px 10px;
+}
+
+.game figure img {
+   height: 100%;
+   width: 100%;
+}
+
+
+/* ====== Players Specs ====== */
+.game-players {
+   position: relative;
+   justify-content: space-between;
+   align-content: space-between;
+   height: 100px;
+   width: 80%;
+}
+
+.player-plate {
+   height: 40px;
+   width: 35%;
+   font-size: 20px;
+}
+
+.versus {
+   position: absolute;
+   height: 60px;
+   width: 21%;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   font-size: 20px;
+}

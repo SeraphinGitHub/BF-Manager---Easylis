@@ -1,0 +1,110 @@
+
+* {
+   margin: 0;
+   padding: 0;
+}
+
+.flexCenter {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   align-content: center;
+   width: 100%;
+}
+
+.visible {
+   visibility: visible !important;
+   opacity: 100% !important;
+}
+
+.display {
+   display: flex !important;
+}
+
+p,
+input,
+button {
+   font-family: "Verdana";
+   text-align: center;
+}
+
+input {
+   text-align: left;
+   height: 50px;
+   padding-left: 30px;
+   font-size: 20px;
+}
+
+button {
+   cursor: pointer;
+}
+
+p {
+   font-size: 18px;
+   text-shadow: black 0px 0px 7px;
+}
+
+body {
+   height: 100vh;
+   justify-content: space-between;
+}
+
+:hover {
+   transition-duration: 0.2s;
+}
+
+
+/* ============================================ */
+/* Game & Chat */
+/* ============================================ */
+.games-header p,
+.chat-header p {
+   padding: 15px;
+   padding-left: 30px;
+   padding-right: 30px;
+   font-size: 22px;
+}
+
+.alert-message {
+   z-index: 100;
+   position: absolute;
+   visibility: hidden;
+   
+   height: 35px;
+   width: 35%;
+   top: 60px;
+   left: 50%;
+   transform: translate(-50%);
+
+   font-size: 18px;
+   border-radius: 5px;
+   text-shadow: none;
+
+   opacity: 0%;
+   transition-duration: 1s;
+}
+
+
+/* ============================================ */
+/* Transitions */
+/* ============================================ */
+.back-cover {
+   z-index: 10;
+   position: absolute;
+   top: 0;
+   left: 0px;
+   height: 100%;
+   width: 100%;
+   background-color: white;
+   transition-duration: 1s;
+}
+
+.slide {
+   left: 1100px;
+   animation: slide 1.2s linear;
+}
+
+@keyframes slide {
+   0% { left: 0px; }
+   100% { left: 1100px; }
+}

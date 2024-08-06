@@ -1,0 +1,293 @@
+
+p,
+button {
+   color:  white;
+}
+
+.borders {
+   border: 3px double darkorange;
+   border-radius: 10px;
+}
+
+.alert-message {
+   color: black;
+   background-color: pink;
+   border: 2px solid red;
+}
+
+.blue-bgd {
+   background: linear-gradient(to bottom right, lightblue, dodgerblue, darkviolet);
+}
+
+.red-bgd {
+   background: linear-gradient(to bottom right, pink, red);
+}
+
+.orange-bgd {
+   background: linear-gradient(to top right, rgb(255, 94, 0), rgb(255, 217, 0));
+}
+
+.violet-bgd {
+   background: linear-gradient(to bottom right, violet, darkviolet);
+}
+
+.green-bgd {
+   background: linear-gradient(to bottom right, greenyellow, rgb(0, 170, 0));
+}
+
+
+/* =================================================== */
+/* :Hover - General */
+/* =================================================== */
+.create-game button:hover,
+.games-list li:hover,
+.player-name button:hover,
+.leave-game-btn:hover,
+.kill-game-btn:hover {
+   box-shadow: grey 5px 5px 5px;
+}
+
+
+/* =================================================== */
+/* :Active - General */
+/* =================================================== */
+.create-game button:active,
+.games-list li:active,
+.player-name button:active,
+.leave-game-btn:active,
+.kill-game-btn:active {
+   box-shadow: rgb(75, 75, 75) 5px 5px 5px;
+}
+
+
+/* =================================================== */
+/* Scroll Bars */
+/* =================================================== */
+
+/* Mozilla */
+.games-list,
+.chat-list {
+   scrollbar-color: darkviolet lightgray;
+}
+
+/* Chrome */
+::-webkit-scrollbar {
+   width: 8px;
+   background: lightgrey;
+}
+
+::-webkit-scrollbar-thumb {
+   background: darkviolet;
+}
+
+
+
+/* =================================================== */
+/* Game Section */
+/* =================================================== */
+.menu {
+   background: linear-gradient(to right, darkviolet, lightgray);
+}
+
+/* :Hover */
+.create-game button:hover {
+   background: linear-gradient(to bottom right, lightblue, rgb(0, 128, 255), darkviolet);
+}
+
+/* :Active */
+.create-game button:active {
+   background: linear-gradient(to bottom right, lightblue, rgb(0, 81, 161), darkviolet);
+}
+
+.games-container,
+.chat-container {
+   background-color: white;
+}
+
+.running-bgd {
+   background: linear-gradient(to right, dodgerblue, darkviolet);
+}
+
+.ended-bgd {
+   background: linear-gradient(to right, lightgray, dimgray);
+}
+
+
+/* ====== Game Name ====== */
+.game figure {
+   background-color: white;
+}
+
+.running-icon {
+   color: limegreen;
+}
+
+.ended-icon {
+   color: dimgray;
+}
+
+.delete-game-btn i {
+   color: red;
+}
+
+/* :Hover */
+.delete-game-btn:hover i {
+   color: red;
+}
+
+/* :Active */
+.delete-game-btn:active i {
+   color: black;
+}
+
+
+/* ====== Game ====== */
+.kill-game-btn {
+   color: black;
+}
+
+/* :Active */
+.leave-game-btn:active {
+   background: linear-gradient(to bottom right, rgb(138, 202, 223), rgb(0, 121, 241), rgb(119, 0, 170));
+}
+
+.kill-game-btn:active {
+   background: linear-gradient(to bottom right, rgb(255, 104, 129), rgb(190, 0, 0));
+}
+
+
+
+/* =================================================== */
+/* Chat Section */
+/* =================================================== */
+.chat {
+   background: linear-gradient(to right, lightgray, dodgerblue);
+}
+
+.chat-container {
+   background: linear-gradient(to right, orange, lightgrey);
+}
+
+.magnifier-btn {
+   background-color: dodgerblue;
+}
+
+.magnifier-btn i {
+   color: white;
+}
+
+/* :Hover */
+.magnifier-btn:hover {
+   background-color: skyblue;
+}
+
+/* :Active */
+.magnifier-btn:active {
+   background-color: royalblue;
+}
+
+.name-field,
+.player-name button,
+.chat-list,
+.chat-container input {
+   background-color: white;
+}
+
+.name-field {
+   color: black;
+}
+
+/* :Active */
+.player-name button:active {
+   background: linear-gradient(to bottom right, pink, red);
+}
+
+
+/* ====== Channels Button ====== */
+.chat-channels button {
+   color: white;
+   text-shadow: black 0px 0px 8px;
+}
+
+.chat-channels button:active {
+   transition-duration: 0s;
+}
+
+.general-chat-btn,
+.private-chat-btn,
+.contact-panel-btn,
+.general-chat,
+.private-chat,
+.contact-panel {
+   border: 4px solid;
+}
+
+
+/* ====== General ====== */
+.general-bgd {
+   border-color: rgb(195, 50, 255);
+   background-color: rgb(195, 50, 255);
+}
+
+/* :Active */
+.general-chat-btn:active {
+   border-color: darkviolet;
+   background-color: darkviolet;
+}
+
+.general-chat {
+   border-color: rgb(195, 50, 255);
+   background: linear-gradient(to bottom, rgb(195, 50, 255), lightgrey, white);
+}
+
+
+/* ====== Private ====== */
+.private-bgd {
+   border-color: rgb(71, 163, 255);
+   background-color: rgb(71, 163, 255);
+}
+
+/* :Active */
+.private-chat-btn:active {
+   border-color: rgb(0, 110, 221);
+   background-color: rgb(0, 110, 221);
+}
+
+.received-bgd {
+   animation: fadeOut 0.8s linear;
+}
+
+@keyframes fadeOut {
+   0% {
+      border-color: red;
+      background-color: red;
+   }
+   
+   100% {
+      border-color: rgb(0, 110, 221);
+      background-color: rgb(0, 110, 221);
+   }
+}
+
+.private-chat {
+   border-color: rgb(71, 163, 255);
+   background: linear-gradient(to bottom, rgb(71, 163, 255), lightgrey, white);
+}
+
+
+/* ====== Contact ====== */
+.contact-bgd {
+   border-color: MediumSpringGreen;
+   background-color: MediumSpringGreen;
+}
+
+/* :Active */
+.contact-panel-btn:active {
+   border-color: lime;
+   background-color: lime;
+}
+
+.contact-panel {
+   border-color: MediumSpringGreen;
+   background: linear-gradient(to bottom, MediumSpringGreen, lightgrey, white);
+}
